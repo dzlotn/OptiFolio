@@ -19,7 +19,7 @@
  (name FinalProject)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml)
+ (depends ocaml lwt yojson cohttp-lwt-unix lwt_ppx lwt_ssl)
  (tags
   ("add topics" "to describe" your project)))
 
