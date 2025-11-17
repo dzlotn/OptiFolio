@@ -300,9 +300,16 @@ let analyze_stock ~api_key symbol =
   | Ok prices -> (
       try
         let returns = Analytics.simple_return_ratio prices in
+        let log_returns = Analytics.log_return_ratio prices in
         let volatility = Analytics.annualized_volatility returns in
         let cum_return = Analytics.cumulative_return prices in
         let avg_price = Analytics.avg prices in
+        (* Cumulative log return: sum of all log returns = log(final/initial) *)
+        let cum_log_return =
+          match log_returns with
+          | [] -> 0.0
+          | _ -> List.fold_left ( +. ) 0.0 log_returns
+        in
         (* Calculate max drawdown: maximum peak-to-trough decline *)
         let max_drawdown =
           let rec calc_max_dd peak max_dd = function
@@ -336,15 +343,17 @@ let analyze_stock ~api_key symbol =
           ; sharpe
           }
         in
-        Lwt.return (Ok summary)
+        Lwt.return (Ok (summary, cum_log_return))
       with Analytics.Empty_series ->
         Lwt.return (Error "Insufficient data for analysis"))
 
-let print_analysis symbol (summary : Analytics.summary) =
+let print_analysis symbol (summary : Analytics.summary) cum_log_return =
   Printf.printf "\n=== Analysis for %s ===\n" symbol;
   Printf.printf "Average Price:        $%.2f\n" summary.avg_price;
   Printf.printf "Cumulative Return:    %.2f%%\n"
     (summary.cumulative_return *. 100.0);
+  Printf.printf "Cumulative Log Return: %.2f%%\n"
+    (cum_log_return *. 100.0);
   Printf.printf "Annualized Volatility: %.2f%%\n"
     (summary.volatility *. 100.0);
   Printf.printf "Max Drawdown:         %.2f%%\n"
@@ -371,8 +380,8 @@ let () =
            let* analysis_result = analyze_stock ~api_key symbol in
            let* () =
              match analysis_result with
-             | Ok summary ->
-                 print_analysis symbol summary;
+             | Ok (summary, cum_log_return) ->
+                 print_analysis symbol summary cum_log_return;
                  Lwt.return_unit
              | Error err ->
                  Lwt_io.eprintf "Failed to analyze %s: %s\n%!" symbol err
