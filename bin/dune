@@ -1,7 +1,7 @@
 (executable
  (public_name FinalProject)
  (name main)
- (libraries FinalProject))
+ (libraries lwt.unix))
 
 (executable
  (name api)
