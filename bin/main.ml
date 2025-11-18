@@ -354,8 +354,8 @@ let print_summary responses =
 
 (* Main execution *)
 let () =
-  if Array.length Sys.argv > 1 && Sys.argv.(1) = "gui" then Gui.run_gui ()
-  else
+  (* if Array.length Sys.argv > 1 && Sys.argv.(1) = "gui" then Gui.run_gui () *)
+  (* else *)
     Lwt_main.run
       (let* () =
          Lwt_io.printf
