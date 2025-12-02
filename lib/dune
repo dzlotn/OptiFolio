@@ -1,4 +1,6 @@
 (library
  (name FinalProject)
+ (modules analytics questionnaire_types risk_profile stock_cache optimizer refresh)
  (instrumentation (backend bisect_ppx))
+ (libraries yojson cohttp-lwt-unix lwt.unix lwt_ssl)
  (wrapped false))

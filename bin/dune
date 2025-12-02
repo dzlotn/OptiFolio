@@ -14,5 +14,19 @@
  (public_name FinalProject)
  (name main)
  (modules main)
- (libraries api lwt.unix gui)
+ (libraries FinalProject api lwt.unix)
+ (preprocess (pps lwt_ppx)))
+
+(executable
+ (public_name FinalProject-gui)
+ (name main_gui)
+ (modules main_gui)
+ (libraries FinalProject api lwt.unix gui)
+ (preprocess (pps lwt_ppx)))
+
+(executable
+ (public_name FinalProject-refresh)
+ (name main_refresh)
+ (modules main_refresh)
+ (libraries FinalProject api lwt.unix)
  (preprocess (pps lwt_ppx)))
