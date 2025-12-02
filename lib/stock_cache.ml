@@ -95,11 +95,6 @@ let current_date_string () : string =
   Printf.sprintf "%04d-%02d-%02d" (tm.Unix.tm_year + 1900) (tm.Unix.tm_mon + 1)
     tm.Unix.tm_mday
 
-(* Check if stock exists in cache *)
-let stock_in_cache (cache : (string, cached_stock) Hashtbl.t) (symbol : string) : bool
-    =
-  Hashtbl.mem cache (String.uppercase_ascii symbol)
-
 (* Get stock from cache *)
 let get_stock_from_cache (cache : (string, cached_stock) Hashtbl.t)
     (symbol : string) : cached_stock option =

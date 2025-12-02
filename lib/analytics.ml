@@ -1,14 +1,6 @@
 (*Defines a stock price series*)
 type series = float list
 
-(*Defines a stock*)
-type stock = {
-  ticker : string;
-  prices : series;
-}
-
-type return_series = float list
-
 (*Defines a dictionary with summary values*)
 type summary = {
   avg_price : float;
@@ -22,8 +14,6 @@ type summary = {
 (*Exception handling*)
 exception Empty_series
 exception Length_mismatch of string
-
-let len_list lst = List.length lst
 
 (*Computes the avg stock price*)
 

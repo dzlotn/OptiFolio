@@ -39,16 +39,6 @@
     "cum_log_return": 0.10074207771469221,
     "last_updated": "2025-12-02"
   },
-  "GOOGL": {
-    "symbol": "GOOGL",
-    "avg_price": 240.2827000000001,
-    "cumulative_return": 0.7394249834765366,
-    "volatility": 0.2945822316452695,
-    "max_drawdown": 0.07125471105527641,
-    "sharpe": 4.940746890211979,
-    "cum_log_return": 0.5535545893430771,
-    "last_updated": "2025-12-02"
-  },
   "PFE": {
     "symbol": "PFE",
     "avg_price": 24.818199999999987,
@@ -57,6 +47,16 @@
     "max_drawdown": 0.11472415052977715,
     "sharpe": 0.07187567353268459,
     "cum_log_return": -0.007920833491444517,
+    "last_updated": "2025-12-02"
+  },
+  "GOOGL": {
+    "symbol": "GOOGL",
+    "avg_price": 240.2827000000001,
+    "cumulative_return": 0.7394249834765366,
+    "volatility": 0.2945822316452695,
+    "max_drawdown": 0.07125471105527641,
+    "sharpe": 4.940746890211979,
+    "cum_log_return": 0.5535545893430771,
     "last_updated": "2025-12-02"
   },
   "CAT": {
@@ -87,6 +87,16 @@
     "max_drawdown": 0.12904237460106635,
     "sharpe": -0.28058984768115325,
     "cum_log_return": -0.026224539636014507,
+    "last_updated": "2025-12-02"
+  },
+  "GOOG": {
+    "symbol": "GOOG",
+    "avg_price": 240.92429999999996,
+    "cumulative_return": 0.7286800503254744,
+    "volatility": 0.2885289104891185,
+    "max_drawdown": 0.06954239147469049,
+    "sharpe": 4.983466873621206,
+    "cum_log_return": 0.5473581406043586,
     "last_updated": "2025-12-02"
   },
   "BA": {
