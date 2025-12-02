@@ -1,125 +1,191 @@
 open Bogue
-module W = Widget
-module L = Layout
 
 let quiz_answers = ref []
-let set_layout widget height = L.resident ~w:500 ~h:height widget
+let set_layout widget height = Layout.resident ~w:500 ~h:height widget
 
-let horizontal_radiolist labels =
-  let pairs = List.map W.check_box_with_label labels in
-  let checks = List.map fst pairs in
-  let layouts =
-    List.map (fun (check, label) -> L.flat_of_w [ check; label ]) pairs
+let rounded_panel ?(bg_color = Style.Solid Draw.(opaque white))
+    ?(border_color = Draw.(transp white)) ?(border_width = 7) width height
+    radius label =
+  let style =
+    let border =
+      Style.mk_border ~radius
+        (Style.mk_line ~color:Draw.(border_color) ~width:border_width ())
+    in
+    Style.create ~background:bg_color ~border ()
   in
-  (Radiolist.of_widgets checks, L.flat layouts)
+  let rounded_box = Layout.resident (Widget.box ~w:width ~h:height ~style ()) in
+  Layout.superpose ~center:true [ rounded_box; label ]
 
-let radio_question question =
-  let question_layout = set_layout question 70 in
-  let radiolist, row_layout = horizontal_radiolist [ "1"; "2"; "3" ] in
-  let answer = L.flat [ row_layout ] in
-  (L.flat ~align:Draw.Center ~hmargin:200 [ question_layout; answer ], radiolist)
+let vertical_radiolist labels =
+  let rl = Radiolist.vertical (Array.of_list labels) in
+  let layout = Radiolist.layout rl in
+  (rl, layout)
+
+let get_blank width height =
+  Layout.resident ~w:width ~h:height (Widget.label "")
+
+let radio_question question answers blank =
+  let question_layout = set_layout question 20 in
+  let radiolist, row_layout = vertical_radiolist answers in
+  let answer = Layout.flat [ row_layout; blank ] in
+  let rounded =
+    rounded_panel 700 160 10
+      (Layout.tower ~align:Draw.Center ~hmargin:200 [ question_layout; answer ])
+  in
+  let full_layout =
+    Layout.flat ~align:Draw.Center [ get_blank 160 20; rounded ]
+  in
+  (full_layout, radiolist)
 
 let q1 () =
-  let question_layout = set_layout (W.label "1.  What is your name?") 20 in
-  let blank = L.resident ~w:200 ~h:20 (W.label "") in
-
-  let answer = W.text_input ~max_size:50 () in
-  let answer_layout = L.resident ~w:200 answer in
-  ( L.flat ~align:Draw.Min ~hmargin:20 [ question_layout; blank; answer_layout ],
-    answer )
+  let question_layout =
+    set_layout (Widget.text_display "1.  What is your name?") 20
+  in
+  let answer = Widget.text_input ~max_size:50 () in
+  let answer_layout =
+    Layout.flat [ get_blank 1 20; Layout.resident ~w:200 answer ]
+  in
+  let rounded =
+    rounded_panel 700 110 10
+      (Layout.tower ~align:Draw.Min ~hmargin:20
+         [ question_layout; answer_layout ])
+  in
+  let full_layout =
+    Layout.flat ~align:Draw.Center [ get_blank 260 20; rounded ]
+  in
+  (full_layout, answer)
 
 let q2 () =
   let question =
-    W.text_display
-      "2.  What is your primary investment goal?\n\
-      \          1. Growth (capital appreciation)\n\
-      \          2. Income (dividend/regular income)\n\
-      \          3. Balanced (growth and income)\n\
-      \          4. Preservation (protect capital)"
+    Widget.text_display "2.  What is your primary investment goal?"
   in
-  let question_layout = set_layout question 90 in
-  let radiolist, row_layout = horizontal_radiolist [ "1"; "2"; "3"; "4" ] in
-  let answer = L.flat [ row_layout ] in
-  (L.flat ~align:Draw.Center ~hmargin:200 [ question_layout; answer ], radiolist)
+  let question_layout = set_layout question 20 in
+  let radiolist, row_layout =
+    vertical_radiolist
+      [
+        "1. Growth (capital appreciation)";
+        "2. Income (dividend/regular income)";
+        "3. Balanced (growth and income)";
+        "4. Preservation (protect capital)";
+      ]
+  in
+  let answer = Layout.flat [ row_layout; get_blank 150 20 ] in
+  let rounded =
+    rounded_panel 700 180 10
+      (Layout.tower ~align:Draw.Center ~hmargin:200 [ question_layout; answer ])
+  in
+  let full_layout =
+    Layout.flat ~align:Draw.Center [ get_blank 160 20; rounded ]
+  in
+  (full_layout, radiolist)
 
 let q3 () =
-  W.text_display
-    "3.  How experienced are you with stock investing?\n\
-    \          1. Beginner\n\
-    \          2. Intermediate\n\
-    \          3. Experienced"
-  |> radio_question
+  let question =
+    Widget.text_display "3.  How experienced are you with stock investing?"
+  in
+  radio_question question
+    [ "1. Beginner"; "2. Intermediate"; "3. Experienced" ]
+    (get_blank 280 20)
 
 let q4 () =
-  W.text_display
-    "4.  How would you describe your risk tolerance?\n\
-    \          1. Conservative (low risk, stable returns)\n\
-    \          2. Moderate (balanced risk and return)\n\
-    \          3. Aggressive (high risk, higher potential returns)"
-  |> radio_question
+  let question =
+    Widget.text_display "4.  How would you describe your risk tolerance?"
+  in
+  radio_question question
+    [
+      "1. Conservative (low risk, stable returns)";
+      "2. Moderate (balanced risk and return)";
+      "3. Aggressive (high risk, higher potential returns)";
+    ]
+    (get_blank 70 20)
 
 let q5 () =
-  W.text_display
-    "5.  What is your investment time horizon?\n\
-    \          1. Short-term (1-3 years)\n\
-    \          2. Medium-term (3-7 years)\n\
-    \          3. Long-term (7+ years)"
-  |> radio_question
+  let question =
+    Widget.text_display "5.  What is your investment time horizon?"
+  in
+  radio_question question
+    [
+      "1. Short-term (1-3 years)";
+      "2. Medium-term (3-7 years)";
+      "3. Long-term (7+ years)";
+    ]
+    (get_blank 210 20)
 
 let q6 () =
-  W.text_display
-    "6.  How many stocks would you like for diversification?\n\
-    \          1. Small (3-5 stocks)\n\
-    \          2. Medium (5-10 stocks)\n\
-    \          3. Large (10+ stocks)"
-  |> radio_question
+  let question =
+    Widget.text_display
+      "6.  How many stocks would you like for diversification?"
+  in
+  radio_question question
+    [
+      "1. Small (3-5 stocks)";
+      "2. Medium (5-10 stocks)";
+      "3. Large (10+ stocks)";
+    ]
+    (get_blank 220 20)
 
 let q7 () =
   let question_layout =
     set_layout
-      (W.label
+      (Widget.text_display
          "7.  Are you willing to invest in assets that may temporarily lose \
           money?")
       20
   in
-  let blank = L.resident ~w:23 ~h:20 (W.label "") in
-  let radiolist, row_layout = horizontal_radiolist [ "Yes"; "No" ] in
-  let answer = L.flat [ row_layout ] in
-  ( L.flat ~align:Draw.Center ~hmargin:172 [ question_layout; blank; answer ],
-    radiolist )
+  let radiolist, row_layout = vertical_radiolist [ "Yes"; "No" ] in
+  let answer = Layout.flat [ row_layout; get_blank 345 20 ] in
+  let rounded =
+    rounded_panel 700 130 10
+      (Layout.tower ~align:Draw.Center ~hmargin:172 [ question_layout; answer ])
+  in
+  let full_layout =
+    Layout.flat ~align:Draw.Center [ get_blank 190 20; rounded ]
+  in
+  (full_layout, radiolist)
 
 let q8 () =
   let question_layout =
-    set_layout (W.label "8.   Do you currently have investments?") 20
+    set_layout (Widget.text_display "8.  Do you currently have investments?") 20
   in
-  let blank = L.resident ~w:121 ~h:20 (W.label "") in
-  let radiolist, row_layout = horizontal_radiolist [ "Yes"; "No" ] in
-  let answer = L.flat [ row_layout ] in
-  ( L.flat ~align:Draw.Center ~hmargin:75 [ question_layout; blank; answer ],
-    radiolist )
+  let radiolist, row_layout = vertical_radiolist [ "Yes"; "No" ] in
+  let answer = Layout.flat [ row_layout; get_blank 345 20 ] in
+  let rounded =
+    rounded_panel 700 130 10
+      (Layout.tower ~align:Draw.Center ~hmargin:172 [ question_layout; answer ])
+  in
+  let full_layout = Layout.flat ~align:Draw.Min [ get_blank 190 20; rounded ] in
+  (full_layout, radiolist)
 
 let q9 () =
   let question_layout =
     set_layout
-      (W.text_display
+      (Widget.text_display
          "9.  If yes, please list your current investments.\n\
           (ticker symbols, separated by commas)")
       20
   in
-  let blank = L.resident ~w:20 ~h:20 (W.label "") in
-
-  let answer = W.text_input ~max_size:1000 () in
-  let answer_layout = L.resident ~w:500 answer in
-  ( L.flat ~align:Draw.Min ~hmargin:202 [ question_layout; blank; answer_layout ],
-    answer )
+  let answer = Widget.text_input ~max_size:1000 () in
+  let answer_layout =
+    Layout.flat [ get_blank 1 20; Layout.resident ~w:200 answer ]
+  in
+  let rounded =
+    rounded_panel 700 110 10
+      (Layout.tower ~align:Draw.Min ~hmargin:20
+         [ question_layout; answer_layout ])
+  in
+  let full_layout =
+    Layout.flat ~align:Draw.Center [ get_blank 260 20; rounded ]
+  in
+  (full_layout, answer)
 
 let submit () =
   let submit =
-    W.button ~border_radius:15 ~label:(Label.create ~size:15 "Submit") ""
+    Widget.button ~border_radius:10 ~label:(Label.create ~size:15 "Submit") ""
   in
   ( submit,
-    L.flat ~align:Draw.Center
-      [ L.resident ~w:1100 ~h:30 (W.label ""); L.resident submit ] )
+    Layout.flat ~align:Draw.Center
+      [ Layout.resident ~w:900 ~h:40 (Widget.label ""); Layout.resident submit ]
+  )
 
 let check_investments curr =
   let investments =
@@ -129,24 +195,24 @@ let check_investments curr =
   investments = []
 
 let check_filled name radios inves curr =
-  W.get_text name <> ""
+  Widget.get_text name <> ""
   && List.for_all (fun r -> Radiolist.get_index r <> None) radios
   && not
        (Radiolist.get_index inves = Some 0
-       && W.get_text curr = ""
-       && check_investments (W.get_text curr))
+       && Widget.get_text curr = ""
+       && check_investments (Widget.get_text curr))
 
 let show_missing_popup layout =
-  Popup.info ~w:200 ~h:50 "ANSWERS MISSING\nPlease answer all questions." layout
+  Popup.info ~w:200 ~h:50 "MISSING ANSWERS\nPlease answer all questions." layout
 
 let set_answers name goal exp risk horizon size willing inves curr =
   let get_value x = string_of_int (Option.get (Radiolist.get_index x) + 1) in
   let investments =
-    if Radiolist.get_index inves = Some 1 then "" else W.get_text curr
+    if Radiolist.get_index inves = Some 1 then "" else Widget.get_text curr
   in
   quiz_answers :=
     [
-      W.get_text name;
+      Widget.get_text name;
       get_value goal;
       get_value exp;
       get_value risk;
@@ -157,11 +223,47 @@ let set_answers name goal exp risk horizon size willing inves curr =
       investments;
     ]
 
-let questions next_page =
+let build_heading () =
   let heading =
-    L.flat_of_w ~align:Draw.Min
-      [ W.label ~size:30 "     Please answer the following questions:" ]
+    rounded_panel 700 80 10
+      (Layout.flat ~align:Draw.Min
+         [
+           get_blank 230 20;
+           Layout.resident
+             (Widget.label ~size:30 "   Please answer the following questions:");
+           get_blank 330 20;
+         ])
   in
+  Layout.flat ~align:Draw.Center [ get_blank 37 20; heading ]
+
+let build_question_content name goal exp risk hor size will inves curr submit =
+  let header =
+    rounded_panel
+      ~bg_color:(Style.Solid Draw.(opaque (164, 211, 222)))
+      ~border_color:Draw.(opaque (164, 211, 222))
+      700 13 10 (get_blank 700 10)
+  in
+  let header_layout =
+    Layout.flat ~align:Draw.Center [ get_blank 258 5; header ]
+  in
+  Layout.tower
+    [
+      get_blank 700 20;
+      header_layout;
+      build_heading ();
+      name;
+      goal;
+      exp;
+      risk;
+      hor;
+      size;
+      will;
+      inves;
+      curr;
+      submit;
+    ]
+
+let questions next_page =
   let name, input = q1 () in
   let goal, q2 = q2 () in
   let exp, q3 = q3 () in
@@ -173,22 +275,12 @@ let questions next_page =
   let curr, q9 = q9 () in
   let submit, submit_layout = submit () in
   let content =
-    L.tower
-      [
-        heading;
-        name;
-        goal;
-        exp;
-        risk;
-        hor;
-        size;
-        will;
-        inves;
-        curr;
-        submit_layout;
-      ]
+    build_question_content name goal exp risk hor size will inves curr
+      submit_layout
   in
-  let layout = L.make_clip ~h:500 content in
+  let layout = Layout.make_clip ~h:500 content in
+  Space.full_width layout;
+  Space.full_height layout;
   let submit_form _widget =
     if not (check_filled input [ q2; q3; q4; q5; q6; q7 ] q8 q9) then
       show_missing_popup layout
@@ -196,56 +288,103 @@ let questions next_page =
       set_answers input q2 q3 q4 q5 q6 q7 q8 q9;
       Layout.set_rooms layout [ next_page ])
   in
-  W.on_button_release ~release:submit_form submit;
-  layout
+  Widget.on_button_release ~release:submit_form submit;
+  Layout.flat ~background:(Layout.color_bg Draw.(211, 228, 232, 500)) [ layout ]
+
+let build_page_content text_layout top top_border top_white bottom_border =
+  Layout.tower ~align:Draw.Center ~sep:(-22)
+    [
+      rounded_panel
+        ~bg_color:(Style.color_bg Draw.(211, 228, 232, 500))
+        ~border_color:Draw.(211, 228, 232, 500)
+        1175 top 0 (get_blank 5 5);
+      rounded_panel
+        ~bg_color:(Style.color_bg Draw.(opaque (240, 245, 246)))
+        ~border_color:Draw.(opaque (240, 245, 246))
+        1175 top_border 0 (get_blank 5 5);
+      rounded_panel
+        ~bg_color:(Style.color_bg Draw.(opaque white))
+        ~border_color:Draw.(opaque white)
+        1175 top_white 0 (get_blank 5 5);
+      text_layout;
+      rounded_panel
+        ~bg_color:(Style.color_bg Draw.(opaque white))
+        ~border_color:Draw.(opaque white)
+        1175 bottom_border 0 (get_blank 5 5);
+      rounded_panel
+        ~bg_color:(Style.color_bg Draw.(opaque (240, 245, 246)))
+        ~border_color:Draw.(opaque (240, 245, 246))
+        1175 10 0 (get_blank 5 10);
+    ]
+
+let make_button button height =
+  rounded_panel
+    ~bg_color:(Style.Solid Draw.(opaque (213, 229, 233)))
+    ~border_color:Draw.(opaque (213, 229, 233))
+    1175 200 0
+    (Layout.resident ~w:250 ~h:height button)
 
 let homepage next_page =
-  let title = W.label ~size:50 "=== Portfolio Optimizer Quiz ===" in
+  let title = Widget.label ~size:50 "=== Portfolio Optimizer Quiz ===" in
   let button_label = Label.create ~size:32 "START" in
-  let button = W.button ~border_radius:15 ~label:button_label "" in
+  let button = Widget.button ~border_radius:25 ~label:button_label "" in
   let welcome =
-    W.label ~size:32 "Welcome! Let's find the perfect portfolio for you."
+    Widget.label ~size:32 "Welcome! Let's find the perfect portfolio for you."
   in
-  let instructions = W.label ~size:32 "Click [START] to begin." in
-  let title_layout = L.flat_of_w ~align:Draw.Center [ title ] in
-  let welcome_layout = L.resident welcome in
-  let instructions_layout = L.resident instructions in
-  let content =
-    L.tower ~align:Draw.Center
-      [ title_layout; welcome_layout; instructions_layout ]
+  let instructions = Widget.label ~size:32 "Click [START] to begin." in
+  let title_layout = Layout.flat_of_w ~align:Draw.Center [ title ] in
+  let welcome_layout = Layout.flat_of_w ~align:Draw.Center [ welcome ] in
+  let instructions_layout =
+    Layout.flat_of_w ~align:Draw.Center [ instructions ]
   in
-  let button_layout = L.resident ~w:200 ~h:50 button in
+  let text_layout =
+    rounded_panel 1175 200 0
+      (Layout.tower ~align:Draw.Center
+         [ title_layout; welcome_layout; instructions_layout ])
+  in
+  let content = build_page_content text_layout 150 26 30 50 in
   let layout =
-    L.tower ~vmargin:75 ~sep:65 ~align:Draw.Center [ content; button_layout ]
+    Layout.tower ~sep:(-11) ~align:Draw.Center
+      [ content; make_button button 85 ]
   in
-  Layout.set_size layout ~w:1250 ~h:820;
+  Space.full_width layout;
+  Space.full_height layout;
   let switch_screens _widget = Layout.set_rooms layout [ next_page ] in
   Widget.on_button_release ~release:switch_screens button;
-  layout
+  Layout.flat ~hmargin:(-10)
+    ~background:(Layout.color_bg Draw.(211, 228, 232, 500))
+    [ layout ]
 
 let endpage prev_page =
-  let title = W.label ~size:50 "Thank you!" in
-  let heading = W.label ~size:40 "Your responses have been recorded." in
-  let button_label = Label.create ~size:32 "End" in
-  let button = W.button ~border_radius:15 ~label:button_label "" in
-  let title_layout = L.flat_of_w ~align:Draw.Center [ title ] in
-  let heading_layout = L.flat_of_w ~align:Draw.Center [ heading ] in
-  let button_layout = L.resident ~w:150 ~h:50 button in
-  let layout =
-    L.tower ~vmargin:200 ~sep:10 ~align:Draw.Center
-      [ title_layout; heading_layout; button_layout ]
+  let title = Widget.label ~size:50 "Thank you!" in
+  let heading = Widget.label ~size:40 "Your responses have been recorded." in
+  let title_layout = Layout.flat_of_w ~align:Draw.Center [ title ] in
+  let heading_layout = Layout.flat_of_w ~align:Draw.Center [ heading ] in
+  let text_layout =
+    rounded_panel 1175 200 0
+      (Layout.tower ~align:Draw.Center [ title_layout; heading_layout ])
   in
-  Layout.set_size layout ~w:1250 ~h:820;
+  let content = build_page_content text_layout 150 36 0 25 in
+  let button_label = Label.create ~size:32 "EXIT" in
+  let button = Widget.button ~border_radius:25 ~label:button_label "" in
+  let layout =
+    Layout.tower ~sep:(-11) ~align:Draw.Center
+      [ content; make_button button 75 ]
+  in
+  Space.full_width layout;
+  Space.full_height layout;
   let end_quiz _widget = Trigger.push_quit () in
   Widget.on_button_release ~release:end_quiz button;
-  layout
+  Layout.flat ~align:Draw.Center ~hmargin:(-10)
+    ~background:(Layout.color_bg Draw.(211, 228, 232, 500))
+    [ layout ]
 
 let run_gui () =
   let endpage = endpage () in
   Layout.set_size endpage ~w:1250 ~h:820;
   let questions = questions endpage in
   Layout.set_size questions ~w:1250 ~h:820;
-  let layout = homepage questions in
-  Layout.set_size layout ~w:1250 ~h:820;
-  let board = Main.of_layout layout in
+  let homepage = homepage questions in
+  Layout.set_size homepage ~w:1250 ~h:820;
+  let board = Main.of_layout homepage in
   Main.run board
