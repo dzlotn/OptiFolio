@@ -1,6 +1,7 @@
 open Lwt.Syntax
 open Questionnaire_types
 open Optimizer
+open Refresh
 
 (* All the questions and their potential answers the questionnaire will ask.
    Eventually, the algorithm will likely use these responses and assign values
@@ -128,52 +129,22 @@ let rec ask_willing_to_lose name =
       in
       ask_willing_to_lose name
 
-(* Question 8: Has current investments *)
-let rec ask_has_current_investments name =
+(* Question 8: List current investments (optional) *)
+let rec ask_list_investments name =
   let* () = Lwt_io.printf "\n==== Question 8 ====\n%!" in
   let* () =
-    Lwt_io.printf "%s, do you currently have investments? (yes/no)\n%!" name
-  in
-  let* input = prompt_input "Enter your choice: " in
-  match parse_yes_no input with
-  | Some has_investments -> Lwt.return has_investments
-  | None ->
-      let* () =
-        Lwt_io.printf "Invalid choice. Please enter 'yes' or 'no'.\n%!"
-      in
-      ask_has_current_investments name
-
-(* Question 9: List current investments (only if yes to question 8) *)
-let rec ask_list_investments name =
-  let* () = Lwt_io.printf "\n==== Question 9 ====\n%!" in
-  let* () =
     Lwt_io.printf
-      "%s, please list your current investments (ticker symbols, separated by \
-       commas):\n\
+      "%s, list current investments tickers (comma separated, leave blank if \
+       none):\n\
        %!"
       name
   in
-  let* input = prompt_input "Enter your investments: " in
-  if String.trim input = "" then
-    let* () =
-      Lwt_io.printf
-        "Please enter at least one investment. You can enter ticker symbols \
-         separated by commas.\n\
-         %!"
-    in
-    ask_list_investments name
-  else
-    let investments =
-      input |> String.split_on_char ',' |> List.map String.trim
-      |> List.filter (fun s -> s <> "")
-    in
-    if investments = [] then
-      let* () =
-        Lwt_io.printf
-          "Please enter at least one valid investment ticker symbol.\n%!"
-      in
-      ask_list_investments name
-    else Lwt.return investments
+  let* input = prompt_input "Enter your investments (or press Enter to skip): " in
+  let investments =
+    input |> String.split_on_char ',' |> List.map String.trim
+    |> List.filter (fun s -> s <> "")
+  in
+  Lwt.return investments
 
 (* Helper functions to convert types to strings for display *)
 let goal_to_string = function
@@ -211,12 +182,10 @@ let run_questionnaire () =
   let* horizon = ask_horizon name in
   let* portfolio_size = ask_portfolio_size name in
   let* willing_to_lose = ask_willing_to_lose name in
-  let* has_current_investments = ask_has_current_investments name in
-  let* current_investments =
-    if has_current_investments then
-      let* investments = ask_list_investments name in
-      Lwt.return (Some investments)
-    else Lwt.return None
+  let* investments = ask_list_investments name in
+  let has_current_investments = investments <> [] in
+  let current_investments =
+    if has_current_investments then Some investments else None
   in
   Lwt.return
     {
@@ -269,6 +238,59 @@ let print_summary responses =
   in
   Lwt_io.printf "============================\n%!"
 
+(* Validate stock symbols and return list of invalid ones *)
+let validate_stocks (stocks : string list) : string list Lwt.t =
+  let cache = Stock_cache.load_cache () in
+  let rec validate_loop invalid = function
+    | [] -> Lwt.return invalid
+    | symbol :: rest ->
+        let symbol_upper = String.uppercase_ascii symbol in
+        match Stock_cache.get_stock_from_cache cache symbol_upper with
+        | Some _ -> validate_loop invalid rest
+        | None -> (
+            (* Try to fetch from API *)
+            let* result = refresh_single_stock symbol_upper in
+            match result with
+            | Some _ -> validate_loop invalid rest
+            | None -> validate_loop (symbol_upper :: invalid) rest)
+  in
+  validate_loop [] stocks
+
+(* Validate and allow correction or skipping of stocks *)
+let rec validate_and_correct_stocks name (stocks : string list) : string list Lwt.t =
+  if stocks = [] then Lwt.return []
+  else
+    let* invalid = validate_stocks stocks in
+    if invalid = [] then Lwt.return stocks
+    else
+      let* () =
+        Lwt_io.printf
+          "\nThe following stock symbols are invalid or could not be found:\n%!"
+      in
+      let* () =
+        Lwt_list.iter_s
+          (fun sym -> Lwt_io.printf "  - %s\n%!" sym)
+          invalid
+      in
+      let* () =
+        Lwt_io.printf
+          "\nOptions:\n\
+          \  1. Enter corrected ticker symbols (comma separated)\n\
+          \  2. Press Enter to skip and continue without these stocks\n\
+           %!"
+      in
+      let* input = prompt_input "Enter your choice (or press Enter to skip): " in
+      if String.trim input = "" then
+        (* Skip invalid stocks, return only valid ones *)
+        let valid = List.filter (fun s -> not (List.mem (String.uppercase_ascii s) invalid)) stocks in
+        Lwt.return valid
+      else
+        let corrected =
+          input |> String.split_on_char ',' |> List.map String.trim
+          |> List.filter (fun s -> s <> "")
+        in
+        validate_and_correct_stocks name corrected
+
 let get_risk_profile responses =
   let* () = Lwt_io.printf "\n=== Calculating Your Risk Profile ===\n%!" in
   let risk_profile = Risk_profile.calculate_risk_profile responses in
@@ -284,9 +306,19 @@ let get_risk_profile responses =
     | None -> []
   in
 
+  (* Validate and correct stocks if needed *)
+  let* validated_stocks =
+    if current_stocks <> [] then
+      let* () =
+        Lwt_io.printf "\n=== Validating Your Current Investments ===\n%!"
+      in
+      validate_and_correct_stocks responses.name current_stocks
+    else Lwt.return []
+  in
+
   (* Check current stocks against risk profile *)
   let* () =
-    if current_stocks <> [] then
+    if validated_stocks <> [] then
       let* () =
         Lwt_io.printf "\n=== Analyzing Your Current Investments ===\n%!"
       in
@@ -335,7 +367,7 @@ let get_risk_profile responses =
             check_stocks rest
       in
 
-      check_stocks current_stocks
+      check_stocks validated_stocks
     else Lwt.return_unit
   in
   (* Get stock recommendations *)
@@ -344,7 +376,7 @@ let get_risk_profile responses =
       "\n=== Stock Recommendations Based on Your Risk Profile ===\n%!"
   in
   let recommendations =
-    Optimizer.get_recommendations risk_profile current_stocks
+    Optimizer.get_recommendations risk_profile validated_stocks
   in
   if recommendations = [] then
     let* () =
@@ -418,7 +450,32 @@ let () =
                    (fun _ -> Lwt.return_unit)
                in
                let* () = print_summary responses in
-               get_risk_profile responses)
+               (* Validate and correct stocks if needed (for GUI, we'll prompt in CLI) *)
+               let current_stocks =
+                 match responses.current_investments with
+                 | Some lst -> lst
+                 | None -> []
+               in
+               let* validated_stocks =
+                 if current_stocks <> [] then
+                   let* () =
+                     Lwt_io.printf
+                       "\n=== Validating Your Current Investments ===\n%!"
+                   in
+                   validate_and_correct_stocks responses.name current_stocks
+                 else Lwt.return []
+               in
+               (* Update responses with validated stocks *)
+               let updated_responses =
+                 {
+                   responses with
+                   current_investments =
+                     (if validated_stocks = [] then None
+                      else Some validated_stocks);
+                   has_current_investments = validated_stocks <> [];
+                 }
+               in
+               get_risk_profile updated_responses)
           else (
             Printf.printf "GUI closed without completing questionnaire.\n";
             exit 0)

@@ -1,42 +1,32 @@
 {
   "AAPL": {
     "symbol": "AAPL",
-    "avg_price": 243.66020000000012,
-    "cumulative_return": 0.34068952453116136,
-    "volatility": 0.22964831508702946,
+    "avg_price": 244.4105000000001,
+    "cumulative_return": 0.37182436966733773,
+    "volatility": 0.22869462884917652,
     "max_drawdown": 0.056063432835820944,
-    "sharpe": 3.3682064658017077,
-    "cum_log_return": 0.2931840521624389,
-    "last_updated": "2025-12-02"
+    "sharpe": 3.637623667705897,
+    "cum_log_return": 0.3161415106631105,
+    "last_updated": "2025-12-03"
   },
-  "MS": {
-    "symbol": "MS",
-    "avg_price": 154.28290000000004,
-    "cumulative_return": 0.17441133569493655,
-    "volatility": 0.2142166275218712,
-    "max_drawdown": 0.06915018832391714,
-    "sharpe": 2.0186815289700615,
-    "cum_log_return": 0.16076703116032545,
-    "last_updated": "2025-12-02"
+  "COST": {
+    "symbol": "COST",
+    "avg_price": 940.0980999999997,
+    "cumulative_return": -0.06002589432261879,
+    "volatility": 0.17013221293081415,
+    "max_drawdown": 0.10904209859537292,
+    "sharpe": -0.8406432786707178,
+    "cum_log_return": -0.06190295124923932,
+    "last_updated": "2025-12-03"
   },
-  "A": {
-    "symbol": "A",
-    "avg_price": 131.49090000000007,
-    "cumulative_return": 0.239257161892072,
-    "volatility": 0.30343100467138934,
-    "max_drawdown": 0.06695536309127242,
-    "sharpe": 1.9517725693248902,
-    "cum_log_return": 0.2145121371167517,
-    "last_updated": "2025-12-02"
-  },
-  "ABCD": {
-    "symbol": "ABCD",
-    "avg_price": 13.293800000000008,
-    "cumulative_return": 0.18688524590163944,
-    "volatility": 0.40172371109660393,
-    "max_drawdown": 0.17831149927219803,
-    "sharpe": 1.2735348419280925,
-    "cum_log_return": 0.1713324352183592,
+  "HD": {
+    "symbol": "HD",
+    "avg_price": 386.2015,
+    "cumulative_return": -0.04344654291967264,
+    "volatility": 0.22784681508254773,
+    "max_drawdown": 0.21501110008974544,
+    "sharpe": -0.3820841333329478,
+    "cum_log_return": -0.04441860344571655,
     "last_updated": "2025-12-03"
   },
   "XOM": {
@@ -47,7 +37,17 @@
     "max_drawdown": 0.07101474719101127,
     "sharpe": 0.27110094743597507,
     "cum_log_return": 0.012734581165077809,
-    "last_updated": "2025-12-02"
+    "last_updated": "2025-12-03"
+  },
+  "UNH": {
+    "symbol": "UNH",
+    "avg_price": 319.6326000000001,
+    "cumulative_return": 0.07971255572559731,
+    "volatility": 0.39655503772465395,
+    "max_drawdown": 0.20896267216714345,
+    "sharpe": 0.6880150457594819,
+    "cum_log_return": 0.07669485360544177,
+    "last_updated": "2025-12-03"
   },
   "NVDA": {
     "symbol": "NVDA",
@@ -57,7 +57,27 @@
     "max_drawdown": 0.1450927357032457,
     "sharpe": 0.9327869489860455,
     "cum_log_return": 0.10074207771469221,
-    "last_updated": "2025-12-02"
+    "last_updated": "2025-12-03"
+  },
+  "JPM": {
+    "symbol": "JPM",
+    "avg_price": 301.76499999999993,
+    "cumulative_return": 0.06643574644960169,
+    "volatility": 0.17973861819695594,
+    "max_drawdown": 0.06994163727723861,
+    "sharpe": 1.0014066102638486,
+    "cum_log_return": 0.06432200999722756,
+    "last_updated": "2025-12-03"
+  },
+  "AMZN": {
+    "symbol": "AMZN",
+    "avg_price": 227.7700999999999,
+    "cumulative_return": 0.038681377110195356,
+    "volatility": 0.33183845788120403,
+    "max_drawdown": 0.14511811023622054,
+    "sharpe": 0.4568444045434538,
+    "cum_log_return": 0.03795200205479429,
+    "last_updated": "2025-12-03"
   },
   "GOOGL": {
     "symbol": "GOOGL",
@@ -67,37 +87,77 @@
     "max_drawdown": 0.07125471105527641,
     "sharpe": 4.940746890211979,
     "cum_log_return": 0.5535545893430771,
-    "last_updated": "2025-12-02"
+    "last_updated": "2025-12-03"
   },
-  "PFE": {
-    "symbol": "PFE",
-    "avg_price": 24.818199999999987,
-    "cumulative_return": -0.007889546351084924,
-    "volatility": 0.28756496370543655,
-    "max_drawdown": 0.11472415052977715,
-    "sharpe": 0.07187567353268459,
-    "cum_log_return": -0.007920833491444517,
-    "last_updated": "2025-12-02"
+  "CVX": {
+    "symbol": "CVX",
+    "avg_price": 154.52990000000003,
+    "cumulative_return": -0.009231783712495915,
+    "volatility": 0.1763392397739386,
+    "max_drawdown": 0.08218500896001983,
+    "sharpe": -0.045546927990261124,
+    "cum_log_return": -0.009274660719272585,
+    "last_updated": "2025-12-03"
   },
-  "CAT": {
-    "symbol": "CAT",
-    "avg_price": 479.37089999999995,
-    "cumulative_return": 0.43529585725903835,
-    "volatility": 0.31003199718979835,
-    "max_drawdown": 0.06901511346513849,
-    "sharpe": 3.123531658955959,
-    "cum_log_return": 0.36137100026694535,
-    "last_updated": "2025-12-02"
+  "BAC": {
+    "symbol": "BAC",
+    "avg_price": 50.25639999999999,
+    "cumulative_return": 0.13001912045889097,
+    "volatility": 0.2045154936667212,
+    "max_drawdown": 0.07285861713106297,
+    "sharpe": 1.6245082141205804,
+    "cum_log_return": 0.12223455334117646,
+    "last_updated": "2025-12-03"
   },
-  "JNJ": {
-    "symbol": "JNJ",
-    "avg_price": 182.33519999999993,
-    "cumulative_return": 0.3095906134421631,
-    "volatility": 0.16713369561770539,
-    "max_drawdown": 0.03985133181912037,
-    "sharpe": 4.195696951742506,
-    "cum_log_return": 0.2697145795492257,
-    "last_updated": "2025-12-02"
+  "PEP": {
+    "symbol": "PEP",
+    "avg_price": 145.2118,
+    "cumulative_return": 0.09618647193331874,
+    "volatility": 0.23246087503058377,
+    "max_drawdown": 0.08753943217665611,
+    "sharpe": 1.1207413227687382,
+    "cum_log_return": 0.09183731267918009,
+    "last_updated": "2025-12-03"
+  },
+  "KO": {
+    "symbol": "KO",
+    "avg_price": 68.9825,
+    "cumulative_return": 0.017273643299265912,
+    "volatility": 0.15891480551427473,
+    "max_drawdown": 0.07180212014134273,
+    "sharpe": 0.3534446948932493,
+    "cum_log_return": 0.017126149997972996,
+    "last_updated": "2025-12-03"
+  },
+  "MA": {
+    "symbol": "MA",
+    "avg_price": 567.5973999999999,
+    "cumulative_return": -0.012856677877834462,
+    "volatility": 0.16463298331660906,
+    "max_drawdown": 0.11917323360491518,
+    "sharpe": -0.11765715494980336,
+    "cum_log_return": -0.012940040240366765,
+    "last_updated": "2025-12-03"
+  },
+  "TSLA": {
+    "symbol": "TSLA",
+    "avg_price": 388.31059999999997,
+    "cumulative_return": 0.3544966866519408,
+    "volatility": 0.46889226151902286,
+    "max_drawdown": 0.16499775818263346,
+    "sharpe": 1.8842904613045475,
+    "cum_log_return": 0.3034299363620509,
+    "last_updated": "2025-12-03"
+  },
+  "META": {
+    "symbol": "META",
+    "avg_price": 714.3801500000002,
+    "cumulative_return": -0.10239693724685116,
+    "volatility": 0.34573963103089767,
+    "max_drawdown": 0.25424050632911394,
+    "sharpe": -0.6214548517790057,
+    "cum_log_return": -0.10802733206138483,
+    "last_updated": "2025-12-03"
   },
   "MSFT": {
     "symbol": "MSFT",
@@ -107,56 +167,56 @@
     "max_drawdown": 0.12904237460106635,
     "sharpe": -0.28058984768115325,
     "cum_log_return": -0.026224539636014507,
-    "last_updated": "2025-12-02"
+    "last_updated": "2025-12-03"
   },
-  "D": {
-    "symbol": "D",
-    "avg_price": 60.228100000000005,
-    "cumulative_return": 0.055069930069930044,
-    "volatility": 0.1736019932349891,
-    "max_drawdown": 0.06682769726247985,
-    "sharpe": 0.8731523564542443,
-    "cum_log_return": 0.053607049157788064,
-    "last_updated": "2025-12-02"
+  "V": {
+    "symbol": "V",
+    "avg_price": 342.47140000000013,
+    "cumulative_return": -0.059572039942938644,
+    "volatility": 0.16573857514454474,
+    "max_drawdown": 0.10043692583464041,
+    "sharpe": -0.8599222754482695,
+    "cum_log_return": -0.06142023066861075,
+    "last_updated": "2025-12-03"
   },
-  "C": {
-    "symbol": "C",
-    "avg_price": 97.53440000000002,
-    "cumulative_return": 0.17931428571428568,
-    "volatility": 0.23408882614067028,
-    "max_drawdown": 0.09237607498309004,
-    "sharpe": 1.9116533437889405,
-    "cum_log_return": 0.16493315576405448,
-    "last_updated": "2025-12-02"
+  "DIS": {
+    "symbol": "DIS",
+    "avg_price": 113.93350000000005,
+    "cumulative_return": -0.12619821622072186,
+    "volatility": 0.21773845011254633,
+    "max_drawdown": 0.1708150317227916,
+    "sharpe": -1.465384914697049,
+    "cum_log_return": -0.13490172106235612,
+    "last_updated": "2025-12-03"
   },
-  "GOOG": {
-    "symbol": "GOOG",
-    "avg_price": 240.92429999999996,
-    "cumulative_return": 0.7286800503254744,
-    "volatility": 0.2885289104891185,
-    "max_drawdown": 0.06954239147469049,
-    "sharpe": 4.983466873621206,
-    "cum_log_return": 0.5473581406043586,
-    "last_updated": "2025-12-02"
+  "WMT": {
+    "symbol": "WMT",
+    "avg_price": 101.88050000000003,
+    "cumulative_return": 0.17362706201712252,
+    "volatility": 0.21827934449394454,
+    "max_drawdown": 0.07722645143538477,
+    "sharpe": 1.9764192263374272,
+    "cum_log_return": 0.160099006559241,
+    "last_updated": "2025-12-03"
+  },
+  "MSFG": {
+    "symbol": "MSFG",
+    "avg_price": 38.4839,
+    "cumulative_return": 0.0796812749003984,
+    "volatility": 0.26994453134586843,
+    "max_drawdown": 0.09766401590457255,
+    "sharpe": 0.8581874440683924,
+    "cum_log_return": 0.07666588174791761,
+    "last_updated": "2025-12-03"
   },
   "BA": {
     "symbol": "BA",
-    "avg_price": 216.80630000000002,
-    "cumulative_return": -0.1780109328160818,
-    "volatility": 0.2655038119487512,
+    "avg_price": 216.59170000000006,
+    "cumulative_return": -0.10901913149104159,
+    "volatility": 0.3108772348756673,
     "max_drawdown": 0.24542926952565502,
-    "sharpe": -1.7433959053754802,
-    "cum_log_return": -0.19602818427727986,
-    "last_updated": "2025-12-02"
-  },
-  "B": {
-    "symbol": "B",
-    "avg_price": 29.893500000000014,
-    "cumulative_return": 0.931732580037665,
-    "volatility": 0.4303915223018824,
-    "max_drawdown": 0.11640953716690039,
-    "sharpe": 4.121467023082902,
-    "cum_log_return": 0.6584173100803566,
-    "last_updated": "2025-12-02"
+    "sharpe": -0.7905844587409413,
+    "cum_log_return": -0.11543232367343727,
+    "last_updated": "2025-12-03"
   }
 }

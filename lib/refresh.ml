@@ -261,12 +261,12 @@ let refresh_single_stock (symbol : string) : (summary * float) option Lwt.t =
       (* User-friendly error message *)
       let user_message =
         if is_invalid_stock_error err then
-          Printf.sprintf "Stock symbol '%s' does not exist or is invalid" symbol_upper
+          Printf.sprintf "\n\nStock symbol '%s' does not exist or is invalid" symbol_upper
         else if contains_substring (String.lowercase_ascii err) "insufficient data" then
           Printf.sprintf "Insufficient data available for '%s'" symbol_upper
         else
           Printf.sprintf "Unable to fetch data for '%s'" symbol_upper
       in
-      let* () = Lwt_io.printf "  ✗ %s\n%!" user_message in
+      let* () = Lwt_io.printf "%s\n%!" user_message in
       Lwt.return None
 
