@@ -1,45 +1,132 @@
-Daniel Zlotnick (dz344)
-Lulu Wang (lw765)
-Ani Jain (aj655)
-Priya Gokhale (pg492)
+# OptiFolio 📈
 
-## Getting the Stock API to work
+> A personalized portfolio optimization tool built in OCaml that analyzes your investment preferences and recommends stocks tailored to your risk profile.
 
-We provide a small OCaml demo in `bin/api.ml` that fetches quote data for 20
-large-cap tickers using the [Alpha Vantage Global Quote API](https://www.alphavantage.co/documentation/).
-Follow the steps below to run it locally.
+OptiFolio is an intelligent portfolio optimization system that helps investors build personalized stock portfolios based on their risk tolerance, investment goals, and financial preferences. By combining user questionnaires with real-time stock data analysis, OptiFolio provides data-driven investment recommendations.
 
-1. **Install OCaml dependencies (one time)**
+## ✨ Features
 
-   ```bash
-   opam install cohttp-lwt-unix yojson lwt lwt_ppx lwt_ssl
-   ```
+- **📋 Interactive Questionnaire**: Comprehensive 9-question assessment covering investment goals, experience, risk tolerance, and time horizon
+- **🎯 Risk Profiling**: Converts qualitative responses into quantitative risk metrics (volatility, Sharpe ratio, max drawdown tolerance)
+- **📊 Financial Analytics**: Advanced calculations including annualized volatility, Sharpe ratio, maximum drawdown, and cumulative returns
+- **🔄 Real-time Stock Data**: Integration with Alpha Vantage API for up-to-date market data
+- **💾 Smart Caching**: Local cache system to minimize API calls and improve performance
+- **🎨 Dual Interface**: Both command-line and graphical user interface options
+- **✅ Portfolio Analysis**: Validates existing investments against your risk profile
+- **📈 Personalized Recommendations**: Algorithm-based stock matching with detailed explanations
 
-   These packages give us HTTPS support plus JSON parsing.
 
-2. **Set your Alpha Vantage key**
+## 🚀 Quick Start
 
-   Create a free API key at Alpha Vantage and export it before running the demo:
+### Prerequisites
 
-   ```bash
-   export ALPHAVANTAGE_API_KEY=your_key_here
-   ```
+- OCaml 5.0+ and opam
+- Alpha Vantage API key ([Get one free](https://www.alphavantage.co/support/#api-key))
 
-   Keeping the key in an environment variable avoids checking secrets into git.
+### Installation
 
-3. **Run the demo executable**
+See [INSTALL.md](INSTALL.md) for detailed installation instructions.
 
-   ```bash
-   dune exec bin/api.exe
-   ```
 
-   - The program iterates over the 20-symbol portfolio and calls the `GLOBAL_QUOTE`
-     endpoint per ticker (Alpha Vantage’s free tier allows only 5 requests per minute),
-     so we throttle with a 15-second sleep between symbols. Expect the run to take
-     roughly five minutes.
-   - Successful output lists symbol, price, day change, change percentage, and volume
-     for each ticker. Errors from Alpha Vantage (e.g., rate-limit “Note” messages)
-     are surfaced directly in the terminal.
+## 📖 Usage
 
-If you need to adjust the tickers or throttle behavior, edit `diversified_symbols`
-and `throttle_seconds` near the top of `bin/api.ml`, then rerun the command above.
+### 1. Refresh Stock Cache (Recommended)
+
+```bash
+# Refresh all default stocks (20 stocks, ~5 minutes)
+dune exec -- FinalProject-refresh
+
+# Or refresh specific stocks
+dune exec -- FinalProject-refresh AAPL,MSFT,GOOGL
+```
+
+### 2. Run the Questionnaire
+
+**CLI Version:**
+```bash
+dune exec -- FinalProject
+```
+
+**GUI Version:**
+```bash
+dune exec -- FinalProject gui
+```
+
+The questionnaire will:
+1. Ask about your investment preferences
+2. Calculate your personalized risk profile
+3. Analyze your current investments (if any)
+4. Provide stock recommendations matching your risk profile
+
+
+## 🔧 API Integration
+
+OptiFolio uses the [Alpha Vantage API](https://www.alphavantage.co/documentation/) for stock data:
+
+- **Endpoint**: `TIME_SERIES_DAILY` function
+- **Rate Limit**: 5 requests per minute (free tier)
+- **Data Cached**: Stock analyses are cached locally to minimize API calls
+- **Automatic Fetching**: Stocks not in cache are automatically fetched during questionnaire
+
+### Supported Stock Symbols
+
+The default portfolio includes 20 large-cap stocks:
+AAPL, MSFT, NVDA, GOOGL, AMZN, META, TSLA, JPM, BAC, WMT, COST, HD, V, MA, UNH, PEP, KO, XOM, CVX, DIS
+
+You can analyze any valid stock symbol by entering it during the questionnaire.
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+dune runtest
+```
+
+Tests cover financial analytics calculations including average, variance, standard deviation, return ratios, cumulative returns, volatility, max drawdown, and Sharpe ratio.
+
+## 📊 How It Works
+
+### Risk Profile Calculation
+
+The system converts your questionnaire responses into a quantitative risk profile:
+
+- **Base Risk**: Determined by your risk tolerance (Conservative: 0.2, Moderate: 0.5, Aggressive: 0.8)
+- **Adjustments**: Modified by investment goal, experience, time horizon, and loss tolerance
+- **Metrics**: Calculates target volatility, minimum Sharpe ratio, and drawdown tolerance
+
+### Stock Scoring Algorithm
+
+Each stock is scored based on:
+- **Volatility Match** (30%): How close the stock's volatility is to your target
+- **Sharpe Ratio** (30%): Risk-adjusted return performance
+- **Drawdown Tolerance** (20%): Maximum decline within acceptable range
+- **Return Score** (20%): Historical return performance
+
+### Recommendation Generation
+
+1. Load all cached stocks
+2. Filter out stocks you already own
+3. Score each stock against your risk profile
+4. Sort by match score
+5. Return top N recommendations (based on your portfolio size preference)
+
+
+## 📝 Configuration
+
+- **API Throttle**: 15 seconds between API calls (configurable in `lib/refresh.ml`)
+- **Minimum Data Points**: 30 price points required for analysis
+- **Cache Location**: `data/stock_cache.json`
+- **Default Stocks**: Defined in `lib/refresh.ml`
+
+## 👥 Authors
+
+- **Daniel Zlotnick** (dz344)
+- **Lulu Wang** (lw765)
+- **Ani Jain** (aj655)
+- **Priya Gokhale** (pg492)
+
+
+---
+
+**Made with ❤️ using OCaml**
