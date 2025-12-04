@@ -1,3 +1,7 @@
 (test
  (name test_stock)
  (libraries ounit2 FinalProject bisect_ppx.runtime bisect_ppx.common))
+
+(test
+ (name test_refresh)
+ (libraries ounit2 FinalProject api lwt.unix bisect_ppx.runtime bisect_ppx.common))
