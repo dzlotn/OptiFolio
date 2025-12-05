@@ -10,11 +10,16 @@
  (libraries FinalProject bogue)
  (preprocess (pps lwt_ppx)))
 
+(library
+ (name refresh)
+ (modules refresh)
+ (libraries FinalProject api lwt.unix))
+
 (executable
  (public_name FinalProject)
  (name main)
  (modules main)
- (libraries FinalProject api lwt.unix)
+ (libraries FinalProject api refresh lwt.unix)
  (preprocess (pps lwt_ppx)))
 
 (executable
@@ -28,5 +33,5 @@
  (public_name FinalProject-refresh)
  (name main_refresh)
  (modules main_refresh)
- (libraries FinalProject api lwt.unix)
+ (libraries FinalProject api refresh lwt.unix)
  (preprocess (pps lwt_ppx)))

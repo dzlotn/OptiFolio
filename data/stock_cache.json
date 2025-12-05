@@ -51,13 +51,13 @@
   },
   "NVDA": {
     "symbol": "NVDA",
-    "avg_price": 181.3858,
-    "cumulative_return": 0.1059913451575548,
-    "volatility": 0.3352720035078356,
+    "avg_price": 181.6678,
+    "cumulative_return": 0.0700822781116881,
+    "volatility": 0.33135853787699887,
     "max_drawdown": 0.1450927357032457,
-    "sharpe": 0.9327869489860455,
-    "cum_log_return": 0.10074207771469221,
-    "last_updated": "2025-12-03"
+    "sharpe": 0.6861820841059403,
+    "cum_log_return": 0.0677355409489971,
+    "last_updated": "2025-12-05"
   },
   "JPM": {
     "symbol": "JPM",
@@ -109,16 +109,6 @@
     "cum_log_return": 0.16264927077487065,
     "last_updated": "2025-12-05"
   },
-  "KO": {
-    "symbol": "KO",
-    "avg_price": 68.9825,
-    "cumulative_return": 0.017273643299265912,
-    "volatility": 0.15891480551427473,
-    "max_drawdown": 0.07180212014134273,
-    "sharpe": 0.3534446948932493,
-    "cum_log_return": 0.017126149997972996,
-    "last_updated": "2025-12-03"
-  },
   "PEP": {
     "symbol": "PEP",
     "avg_price": 145.2118,
@@ -127,6 +117,16 @@
     "max_drawdown": 0.08753943217665611,
     "sharpe": 1.1207413227687382,
     "cum_log_return": 0.09183731267918009,
+    "last_updated": "2025-12-03"
+  },
+  "KO": {
+    "symbol": "KO",
+    "avg_price": 68.9825,
+    "cumulative_return": 0.017273643299265912,
+    "volatility": 0.15891480551427473,
+    "max_drawdown": 0.07180212014134273,
+    "sharpe": 0.3534446948932493,
+    "cum_log_return": 0.017126149997972996,
     "last_updated": "2025-12-03"
   },
   "MA": {
