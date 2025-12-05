@@ -9,6 +9,16 @@
     "cum_log_return": 0.18,
     "last_updated": "2025-12-05"
   },
+  "AAPL": {
+    "symbol": "AAPL",
+    "avg_price": 245.88170000000008,
+    "cumulative_return": 0.3356490293110011,
+    "volatility": 0.230558125989208,
+    "max_drawdown": 0.056063432835820944,
+    "sharpe": 3.314109881855809,
+    "cum_log_return": 0.2894173379905529,
+    "last_updated": "2025-12-05"
+  },
   "TEST2": {
     "symbol": "TEST2",
     "avg_price": 50.0,
@@ -97,6 +107,16 @@
     "max_drawdown": 0.1,
     "sharpe": 2.0,
     "cum_log_return": 0.18,
+    "last_updated": "2025-12-05"
+  },
+  "MSFT": {
+    "symbol": "MSFT",
+    "avg_price": 510.1712000000001,
+    "cumulative_return": -0.0490091372967842,
+    "volatility": 0.18445197956650183,
+    "max_drawdown": 0.12904237460106635,
+    "sharpe": -0.6010591443021058,
+    "cum_log_return": -0.05025082457626439,
     "last_updated": "2025-12-05"
   },
   "TEST3": {

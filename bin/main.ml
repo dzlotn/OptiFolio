@@ -465,41 +465,17 @@ let () =
         if exit_code = 0 then
           let response_file = "quiz_responses.tmp" in
           if Sys.file_exists response_file then
-            Lwt_main.run
-              (let* responses = read_file_responses response_file in
-               let* () =
-                 Lwt.catch
-                   (fun () -> Lwt.return (Sys.remove response_file))
-                   (fun _ -> Lwt.return_unit)
-               in
-               let* () = print_summary responses in
-               (* Validate and correct stocks if needed (for GUI, we'll prompt
-                  in CLI) *)
-               let current_stocks =
-                 match responses.current_investments with
-                 | Some lst -> lst
-                 | None -> []
-               in
-               let* validated_stocks =
-                 if current_stocks <> [] then
-                   let* () =
-                     Lwt_io.printf
-                       "\n=== Validating Your Current Investments ===\n%!"
-                   in
-                   validate_and_correct_stocks responses.name current_stocks
-                 else Lwt.return []
-               in
-               (* Update responses with validated stocks *)
-               let updated_responses =
-                 {
-                   responses with
-                   current_investments =
-                     (if validated_stocks = [] then None
-                      else Some validated_stocks);
-                   has_current_investments = validated_stocks <> [];
-                 }
-               in
-               get_risk_profile updated_responses)
+            (Lwt_main.run
+               (let* responses = read_file_responses response_file in
+                let* () =
+                  Lwt.catch
+                    (fun () -> Lwt.return (Sys.remove response_file))
+                    (fun _ -> Lwt.return_unit)
+                in
+                let* () = print_summary responses in
+                (* get_risk_profile will handle validation and optimization *)
+                get_risk_profile responses);
+             exit 0)
           else (
             Printf.printf "GUI closed without completing questionnaire.\n";
             exit 0)
