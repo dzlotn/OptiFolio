@@ -121,13 +121,26 @@ let rec ask_willing_to_lose name =
       name
   in
   let* input = prompt_input "Enter your choice: " in
-  match parse_yes_no input with
-  | Some willing -> Lwt.return willing
-  | None ->
-      let* () =
-        Lwt_io.printf "Invalid choice. Please enter 'yes' or 'no'.\n%!"
-      in
-      ask_willing_to_lose name
+  let trimmed_input = String.trim input in
+  if trimmed_input = "" then
+    let* () =
+      Lwt_io.printf
+        "Error: Empty input. Please enter 'yes' or 'no' (you can also use 'y', \
+         'n', 'true', 'false', '1', or '2').\n%!"
+    in
+    ask_willing_to_lose name
+  else
+    match parse_yes_no trimmed_input with
+    | Some willing -> Lwt.return willing
+    | None ->
+        let* () =
+          Lwt_io.printf
+            "Error: Invalid input '%s'. Please enter one of the following:\n\
+            \  For 'yes': yes, y, true, or 1\n\
+            \  For 'no': no, n, false, or 2\n\
+             %!" trimmed_input
+        in
+        ask_willing_to_lose name
 
 (* Question 8: List current investments (optional) *)
 let rec ask_list_investments name =

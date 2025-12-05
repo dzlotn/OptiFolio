@@ -166,7 +166,7 @@ let test_refresh_stock_cache_multiple _ =
       Lwt_main.run
         (let test_symbols = [ "AAPL"; "MSFT" ] in
          (* Refresh cache with test symbols *)
-         let* () = refresh_stock_cache ~symbols:test_symbols () in
+         let* () = refresh_stock_cache ~symbols:(Some test_symbols) () in
          (* Load cache and verify both stocks are present *)
          let cache = load_cache () in
          let today = today_date_string () in
@@ -241,7 +241,7 @@ let test_refresh_stock_cache_empty_list _ =
         "ALPHAVANTAGE_API_KEY not set - skipping empty list test"
   | Some _ ->
       Lwt_main.run
-        (let* () = refresh_stock_cache ~symbols:[] () in
+        (let* () = refresh_stock_cache ~symbols:(Some []) () in
          (* Should complete without error *)
          Lwt.return_unit)
 
@@ -331,7 +331,7 @@ let test_refresh_stock_cache_mixed_symbols _ =
       Lwt_main.run
         (let test_symbols = [ "AAPL"; "INVALID123"; "MSFT" ] in
          (* Should handle mix gracefully - valid ones succeed, invalid ones fail *)
-         let* () = refresh_stock_cache ~symbols:test_symbols () in
+         let* () = refresh_stock_cache ~symbols:(Some test_symbols) () in
          (* Verify at least valid symbols are in cache *)
          let cache = load_cache () in
          let aapl_in_cache = get_stock_from_cache cache "AAPL" <> None in
@@ -398,7 +398,7 @@ let test_refresh_stock_cache_single _ =
   | Some _ ->
       Lwt_main.run
         (let test_symbols = [ "WMT" ] in
-         let* () = refresh_stock_cache ~symbols:test_symbols () in
+         let* () = refresh_stock_cache ~symbols:(Some test_symbols) () in
          (* Verify stock is in cache *)
          let cache = load_cache () in
          let stock_opt = get_stock_from_cache cache "WMT" in

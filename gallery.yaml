@@ -1,13 +1,13 @@
 ---
 # Members of your group.
-group:  
+group:
   - name: Priya Gokhale
     netid: pg492
   - name: Animish Jain
     netid: aj655
   - name: Daniel Zlotnick
     netid: dz344
-  - name: Lulu Wang	
+  - name: Lulu Wang
     netid: lw765
 
 # Your PM.
@@ -24,12 +24,8 @@ git-repo: "https://github.coecis.cornell.edu/dz344/team80netheritetheta"
 demo-video-url: "https://youtu.be/7GTLF5OP0SI"
 # Write a short, attention-grabbing description of your project.
 desc: >
-  Our project optimizes a user’s investment portfolio based on given 
-  risk or investment return constraints. The interface prompts the user 
-  for their investment goals and a list of current assets (if they have 
-  any). Based on the user’s responses, the program will call a stock API 
-  to return an investment portfolio that is suited for the user. 
-
-  If a user is new to investing, we create a new investment portfolio
-  for them based on their answers to a form assessing their investment
-  goals. 
+  Our project optimizes a user’s investment portfolio based on given
+  risk or investment return constraints. The interface prompts the user
+  for their investment goals and a list of current assets (if they have
+  any). Based on the user’s responses, the program will call a stock API
+  and return investment recommendations based on their risk tolerance.
