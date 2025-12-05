@@ -180,7 +180,7 @@ let analyze_stock ~api_key symbol =
 let throttle_seconds = 15.
 
 (* Refresh stock cache with API data *)
-let refresh_stock_cache ?(symbols : string list option) () : unit Lwt.t =
+let refresh_stock_cache ?(symbols : string list option = None) () : unit Lwt.t =
   let api_key = read_api_key () in
   let cache = load_cache () in
 

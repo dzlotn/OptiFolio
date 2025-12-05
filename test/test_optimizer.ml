@@ -229,7 +229,11 @@ let test_check_stock_against_profile_multiple_issues _ =
   assert_bool "Message should contain multiple issues"
     (String.contains msg ';' || String.length msg > 50)
 
-(* Test take helper function *)
+(* Test take helper function - using local implementation since it's not exported *)
+let rec take n = function
+  | [] -> []
+  | x :: xs -> if n <= 0 then [] else x :: take (n - 1) xs
+
 let test_take _ =
   assert_equal [] (take 0 [ 1; 2; 3 ]);
   assert_equal [ 1 ] (take 1 [ 1; 2; 3 ]);
