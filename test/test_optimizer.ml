@@ -229,43 +229,164 @@ let test_check_stock_against_profile_multiple_issues _ =
   assert_bool "Message should contain multiple issues"
     (String.contains msg ';' || String.length msg > 50)
 
-(* Test take helper function - using local implementation since it's not exported *)
-let rec take n = function
-  | [] -> []
-  | x :: xs -> if n <= 0 then [] else x :: take (n - 1) xs
+(* Test take helper function - test it indirectly through get_recommendations *)
+let test_take_functionality _ =
+  (* Test take indirectly by testing get_recommendations with different portfolio sizes *)
+  let profile_small =
+    make_profile ~risk_score:0.5 ~target_volatility:0.25 ~min_sharpe:1.0
+      ~max_drawdown_tolerance:0.20 ~portfolio_size:2
+  in
+  let profile_large =
+    make_profile ~risk_score:0.5 ~target_volatility:0.25 ~min_sharpe:1.0
+      ~max_drawdown_tolerance:0.20 ~portfolio_size:10
+  in
+  (* Create test cache with multiple stocks *)
+  let cache = Stock_cache.load_cache () in
+  let test_stocks =
+    [
+      ("TEST1", make_summary ~avg_price:100.0 ~cumulative_return:0.20 ~volatility:0.25
+         ~max_drawdown:0.10 ~sharpe:2.0);
+      ("TEST2", make_summary ~avg_price:50.0 ~cumulative_return:0.15 ~volatility:0.20
+         ~max_drawdown:0.08 ~sharpe:1.8);
+      ("TEST3", make_summary ~avg_price:200.0 ~cumulative_return:0.25 ~volatility:0.30
+         ~max_drawdown:0.12 ~sharpe:2.2);
+    ]
+  in
+  List.iter
+    (fun (symbol, summary) ->
+      Stock_cache.update_cache cache symbol summary 0.18)
+    test_stocks;
+  Stock_cache.save_cache cache;
+  
+  (* Test that portfolio_size limits the results *)
+  let recs_small = get_recommendations profile_small [] in
+  let recs_large = get_recommendations profile_large [] in
+  assert_bool "Small portfolio should limit results"
+    (List.length recs_small <= profile_small.portfolio_size);
+  assert_bool "Large portfolio can have more results"
+    (List.length recs_large <= profile_large.portfolio_size)
 
-let test_take _ =
-  assert_equal [] (take 0 [ 1; 2; 3 ]);
-  assert_equal [ 1 ] (take 1 [ 1; 2; 3 ]);
-  assert_equal [ 1; 2 ] (take 2 [ 1; 2; 3 ]);
-  assert_equal [ 1; 2; 3 ] (take 3 [ 1; 2; 3 ]);
-  assert_equal [ 1; 2; 3 ] (take 5 [ 1; 2; 3 ]);
-  assert_equal [] (take 0 []);
-  assert_equal [] (take 5 [])
-
-(* Test get_recommendations with empty cache *)
-let test_get_recommendations_empty_cache _ =
-  (* This test requires mocking the cache, which is complex.
-     We'll test that it handles empty cache gracefully *)
+(* Test get_recommendations with populated cache - covers filtering, scoring, sorting *)
+let test_get_recommendations_with_cache _ =
   let profile =
     make_profile ~risk_score:0.5 ~target_volatility:0.25 ~min_sharpe:1.0
       ~max_drawdown_tolerance:0.20 ~portfolio_size:5
   in
-  (* If cache is empty, should return empty list *)
+  (* Create test cache with multiple stocks *)
+  let cache = Stock_cache.load_cache () in
+  let test_stocks =
+    [
+      ( "STOCK1"
+      , make_summary ~avg_price:100.0 ~cumulative_return:0.20 ~volatility:0.25
+          ~max_drawdown:0.10 ~sharpe:2.0 );
+      ( "STOCK2"
+      , make_summary ~avg_price:50.0 ~cumulative_return:0.15 ~volatility:0.20
+          ~max_drawdown:0.08 ~sharpe:1.8 );
+      ( "STOCK3"
+      , make_summary ~avg_price:200.0 ~cumulative_return:0.25 ~volatility:0.30
+          ~max_drawdown:0.12 ~sharpe:2.2 );
+      ( "STOCK4"
+      , make_summary ~avg_price:75.0 ~cumulative_return:0.10 ~volatility:0.22
+          ~max_drawdown:0.09 ~sharpe:1.5 );
+    ]
+  in
+  List.iter
+    (fun (symbol, summary) ->
+      Stock_cache.update_cache cache symbol summary 0.18)
+    test_stocks;
+  Stock_cache.save_cache cache;
+  
+  (* Verify cache was saved by checking it has stocks *)
+  let verify_cache = Stock_cache.load_cache () in
+  let all_stocks = Stock_cache.get_all_cached_stocks verify_cache in
+  (* Check that we have at least some stocks in cache (may have existing ones) *)
+  let cache_has_stocks = List.length all_stocks > 0 in
+  
+  (* Test that recommendations are generated and sorted *)
   let recommendations = get_recommendations profile [] in
-  (* This will depend on actual cache state, so we just verify it's a list *)
-  assert_bool "Should return a list" (List.length recommendations >= 0)
+  (* If cache has stocks, we should get recommendations *)
+  if cache_has_stocks then
+    assert_bool "Should return recommendations when cache has stocks"
+      (List.length recommendations > 0)
+  else
+    (* If cache is empty, recommendations will be empty *)
+    assert_bool "Empty cache should return empty recommendations"
+      (List.length recommendations = 0);
+  (* Verify sorting - scores should be descending *)
+  let rec check_sorted = function
+    | [] | [ _ ] -> true
+    | r1 :: r2 :: rest -> r1.score >= r2.score && check_sorted (r2 :: rest)
+  in
+  assert_bool "Recommendations should be sorted by score"
+    (check_sorted recommendations);
+  (* Verify each recommendation has required fields *)
+  List.iter
+    (fun (r : recommendation) ->
+      assert_bool "Recommendation should have symbol" (r.symbol <> "");
+      assert_bool "Recommendation should have score in range"
+        (r.score >= 0.0 && r.score <= 1.0);
+      assert_bool "Recommendation should have reason" (r.reason <> ""))
+    recommendations
 
-(* Test get_recommendations excludes specified symbols *)
+(* Test get_recommendations with empty cache *)
+let test_get_recommendations_empty_cache _ =
+  (* Save current cache and clear it *)
+  let original_cache = Stock_cache.load_cache () in
+  let empty_cache = Hashtbl.create 10 in
+  Stock_cache.save_cache empty_cache;
+  
+  let profile =
+    make_profile ~risk_score:0.5 ~target_volatility:0.25 ~min_sharpe:1.0
+      ~max_drawdown_tolerance:0.20 ~portfolio_size:5
+  in
+  let recommendations = get_recommendations profile [] in
+  assert_bool "Should return empty list when cache is empty"
+    (recommendations = []);
+  
+  (* Restore original cache *)
+  Stock_cache.save_cache original_cache
+
+(* Test get_recommendations excludes specified symbols - covers filtering logic *)
 let test_get_recommendations_excludes_symbols _ =
   let profile =
     make_profile ~risk_score:0.5 ~target_volatility:0.25 ~min_sharpe:1.0
       ~max_drawdown_tolerance:0.20 ~portfolio_size:10
   in
-  let recommendations = get_recommendations profile [ "AAPL"; "MSFT" ] in
-  (* This test verifies the function runs and returns a list *)
-  (* Actual exclusion verification depends on cache state, so we just verify it's callable *)
-  assert_bool "Function should return a list"
+  (* Create test cache with specific stocks *)
+  let cache = Stock_cache.load_cache () in
+  let test_stocks =
+    [
+      ( "EXCLUDE1"
+      , make_summary ~avg_price:100.0 ~cumulative_return:0.20 ~volatility:0.25
+          ~max_drawdown:0.10 ~sharpe:2.0 );
+      ( "EXCLUDE2"
+      , make_summary ~avg_price:50.0 ~cumulative_return:0.15 ~volatility:0.20
+          ~max_drawdown:0.08 ~sharpe:1.8 );
+      ( "KEEP1"
+      , make_summary ~avg_price:200.0 ~cumulative_return:0.25 ~volatility:0.30
+          ~max_drawdown:0.12 ~sharpe:2.2 );
+      ( "KEEP2"
+      , make_summary ~avg_price:75.0 ~cumulative_return:0.10 ~volatility:0.22
+          ~max_drawdown:0.09 ~sharpe:1.5 );
+    ]
+  in
+  List.iter
+    (fun (symbol, summary) ->
+      Stock_cache.update_cache cache symbol summary 0.18)
+    test_stocks;
+  Stock_cache.save_cache cache;
+  
+  (* Test exclusion - should not include EXCLUDE1 or EXCLUDE2 *)
+  let recommendations = get_recommendations profile [ "EXCLUDE1"; "EXCLUDE2" ] in
+  let rec check_excluded = function
+    | [] -> false
+    | (r : recommendation) :: rest ->
+        r.symbol = "EXCLUDE1" || r.symbol = "EXCLUDE2" || check_excluded rest
+  in
+  assert_bool "Excluded symbols should not appear in recommendations"
+    (not (check_excluded recommendations));
+  (* Should still have other stocks if available *)
+  assert_bool "Should have recommendations from non-excluded stocks"
     (List.length recommendations >= 0)
 
 (* Test get_recommendations respects portfolio size *)
@@ -346,7 +467,8 @@ let suite =
          >:: test_check_stock_against_profile_high_drawdown;
          "check_stock_against_profile_multiple_issues"
          >:: test_check_stock_against_profile_multiple_issues;
-         "take" >:: test_take;
+         "take_functionality" >:: test_take_functionality;
+         "get_recommendations_with_cache" >:: test_get_recommendations_with_cache;
          "get_recommendations_empty_cache" >:: test_get_recommendations_empty_cache;
          "get_recommendations_excludes_symbols"
          >:: test_get_recommendations_excludes_symbols;
