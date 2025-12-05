@@ -39,7 +39,6 @@ let read_api_key () =
         "Set the ALPHAVANTAGE_API_KEY environment variable with your API token \
          from https://www.alphavantage.co/support/#api-key."
 
-(* Fetch daily prices - duplicated from api.ml for lib access *)
 let fetch_daily_prices ~api_key symbol =
   let uri =
     Uri.add_query_params'

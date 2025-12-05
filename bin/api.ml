@@ -11,5 +11,3 @@ let read_api_key () =
         "Set the ALPHAVANTAGE_API_KEY environment variable with your API token \
          from https://www.alphavantage.co/support/#api-key."
 
-(* API library - kept minimal for potential future use *)
-(* Note: fetch_daily_prices and analyze_stock are implemented in refresh.ml *)

@@ -2,11 +2,11 @@ open Questionnaire_types
 
 (* Risk profile with numeric scores *)
 type risk_profile = {
-  risk_score : float; (* 0.0 to 1.0, where 0.0 is conservative, 1.0 is aggressive *)
-  target_volatility : float; (* Target annualized volatility (0.0 to 1.0) *)
-  min_sharpe : float; (* Minimum acceptable Sharpe ratio *)
-  max_drawdown_tolerance : float; (* Maximum acceptable drawdown (0.0 to 1.0) *)
-  portfolio_size : int; (* Number of stocks desired *)
+  risk_score : float;
+  target_volatility : float;
+  min_sharpe : float;
+  max_drawdown_tolerance : float;
+  portfolio_size : int; 
 }
 
 (* Convert questionnaire responses to a risk profile *)
@@ -66,9 +66,9 @@ let calculate_risk_profile (responses : questionnaire_responses) : risk_profile 
   (* Portfolio size - randomly select from the specified range *)
   let portfolio_size =
     match responses.portfolio_size with
-    | Small -> 3 + Random.int 3 (* 3-5 stocks: 3 + (0, 1, or 2) *)
-    | Medium -> 5 + Random.int 6 (* 5-10 stocks: 5 + (0, 1, 2, 3, 4, or 5) *)
-    | Large -> 10 + Random.int 6 (* 10-15 stocks: 10 + (0, 1, 2, 3, 4, or 5) *)
+    | Small -> 3 + Random.int 3
+    | Medium -> 5 + Random.int 6
+    | Large -> 10 + Random.int 6
   in
 
   {

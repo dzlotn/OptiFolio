@@ -3,9 +3,7 @@ open Questionnaire_types
 open Optimizer
 open Refresh
 
-(* All the questions and their potential answers the questionnaire will ask.
-   Eventually, the algorithm will likely use these responses and assign values
-   to them to quantify a user's investment needs. *)
+(* All the questions and their potential answers the questionnaire will ask. *)
 
 (* reading user input *)
 let read_line () =
