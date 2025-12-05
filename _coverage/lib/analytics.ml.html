@@ -302,113 +302,113 @@ exception Length_mismatch of string
 (*Computes the avg stock price*)
 
 let avg xs =
-  <span data-count="17">m</span>atch xs with
+  <span data-count="11">m</span>atch xs with
   | <span data-count="1">[</span>] -&gt; raise Empty_series
-  | <span data-count="16">_</span> -&gt;
+  | <span data-count="10">_</span> -&gt;
       let sum = List.fold_left ( +. ) 0.0 xs in
-      <span data-count="16">l</span>et count = float_of_int (List.lengt<span data-count="16">h</span> xs) in
-      <span data-count="16">s</span>um /. count
+      <span data-count="10">l</span>et count = float_of_int (List.lengt<span data-count="10">h</span> xs) in
+      <span data-count="10">s</span>um /. count
 
 (*Computes the sum of squares of a list of stock vals*)
 
 let sum_of_squares lst =
-  <span data-count="9">m</span>atch lst with
+  <span data-count="7">m</span>atch lst with
   | <span data-count="1">[</span>] -&gt; raise Empty_series
-  | <span data-count="8">_</span> -&gt;
+  | <span data-count="6">_</span> -&gt;
       let m = avg lst in
-      <span data-count="8">L</span>ist.fold_left
+      <span data-count="6">L</span>ist.fold_left
         (fun acc x -&gt;
-          <span data-count="217">l</span>et d = x -. m in
+          <span data-count="19">l</span>et d = x -. m in
           acc +. (d *. d))
         0.0 lst
 
 (*Computes the variance of a list of stock vals*)
 let variance lst =
-  <span data-count="8">m</span>atch lst with
+  <span data-count="6">m</span>atch lst with
   | <span data-count="1">[</span>] -&gt; raise Empty_series
-  | <span data-count="7">_</span> -&gt;
+  | <span data-count="5">_</span> -&gt;
       let sos = sum_of_squares lst in
-      <span data-count="7">l</span>et n = float_of_int (List.lengt<span data-count="7">h</span> lst) in
-      <span data-count="7">s</span>os /. n
+      <span data-count="5">l</span>et n = float_of_int (List.lengt<span data-count="5">h</span> lst) in
+      <span data-count="5">s</span>os /. n
 
 (*Computes the standard deviation of a list of stock vals*)
 
 let standard_deviation lst =
-  <span data-count="6">l</span>et v = variance lst in
-  <span data-count="6">s</span>qrt v
+  <span data-count="4">l</span>et v = variance lst in
+  <span data-count="4">s</span>qrt v
 
 (*Gets lst of prices and returns a lst of percent diffs*)
 let simple_return_ratio lst =
-  <span data-count="5">m</span>atch lst with
+  <span data-count="3">m</span>atch lst with
   | <span data-count="1">[</span>] | <span data-count="1">[</span> _ ] -&gt; raise Empty_series
-  | <span data-count="3">_</span> -&gt;
+  | <span data-count="1">_</span> -&gt;
       let rec aux prev xs =
-        <span data-count="203">m</span>atch xs with
-        | <span data-count="3">[</span>] -&gt; []
-        | <span data-count="200">p</span> :: tl -&gt;
+        <span data-count="3">m</span>atch xs with
+        | <span data-count="1">[</span>] -&gt; []
+        | <span data-count="2">p</span> :: tl -&gt;
             let r = (p -. prev) /. prev in
-            r :: au<span data-count="200">x</span> p tl
+            r :: au<span data-count="2">x</span> p tl
       in
-      aux (List.h<span data-count="3">d</span> lst) (List.t<span data-count="3">l</span> lst)
+      aux (List.h<span data-count="1">d</span> lst) (List.t<span data-count="1">l</span> lst)
 
 (*Gets lst of prices and returns lst of logged percent diffs called simple
   returns*)
 let log_return_ratio lst =
-  <span data-count="5">m</span>atch lst with
+  <span data-count="3">m</span>atch lst with
   | <span data-count="1">[</span>] | <span data-count="1">[</span> _ ] -&gt; raise Empty_series
-  | <span data-count="3">_</span> -&gt;
+  | <span data-count="1">_</span> -&gt;
       let rec aux prev xs =
-        <span data-count="203">m</span>atch xs with
-        | <span data-count="3">[</span>] -&gt; []
-        | <span data-count="200">p</span> :: tl -&gt;
+        <span data-count="3">m</span>atch xs with
+        | <span data-count="1">[</span>] -&gt; []
+        | <span data-count="2">p</span> :: tl -&gt;
             let r = log (p /. prev) in
-            <span data-count="200">r</span> :: au<span data-count="200">x</span> p tl
+            <span data-count="2">r</span> :: au<span data-count="2">x</span> p tl
       in
-      aux (List.h<span data-count="3">d</span> lst) (List.t<span data-count="3">l</span> lst)
+      aux (List.h<span data-count="1">d</span> lst) (List.t<span data-count="1">l</span> lst)
 
 (*Gets the cumulative return ratio over the entire lifetime*)
 let cumulative_return lst =
-  <span data-count="4">m</span>atch lst with
+  <span data-count="2">m</span>atch lst with
   | <span data-count="1">[</span>] -&gt; raise Empty_series
-  | <span data-count="3">_</span> -&gt;
+  | <span data-count="1">_</span> -&gt;
       let first = List.hd lst in
-      <span data-count="3">l</span>et last = List.hd (List.re<span data-count="3">v</span> lst) in
-      <span data-count="3">(</span>last -. first) /. first
+      <span data-count="1">l</span>et last = List.hd (List.re<span data-count="1">v</span> lst) in
+      <span data-count="1">(</span>last -. first) /. first
 
 (*Volatility over one-year period*)
 let annualized_volatility returns =
-  <span data-count="3">l</span>et sd = standard_deviation returns in
-  <span data-count="3">s</span>d *. sqr<span data-count="3">t</span> 252.0
+  <span data-count="1">l</span>et sd = standard_deviation returns in
+  <span data-count="1">s</span>d *. sqr<span data-count="1">t</span> 252.0
 
 (*Calculate cumulative log return: sum of all log returns = log(final/initial)*)
 let cumulative_log_return log_returns =
-  <span data-count="5">m</span>atch log_returns with
+  <span data-count="3">m</span>atch log_returns with
   | <span data-count="1">[</span>] -&gt; 0.0
-  | <span data-count="4">_</span> -&gt; List.fold_left ( +. ) 0.0 log_returns
+  | <span data-count="2">_</span> -&gt; List.fold_left ( +. ) 0.0 log_returns
 
 (*Calculate max drawdown: maximum peak-to-trough decline*)
 let max_drawdown prices =
-  <span data-count="4">l</span>et rec calc_max_dd peak max_dd = function
-    | <span data-count="3">[</span>] -&gt; max_dd
-    | <span data-count="202">p</span> :: rest -&gt;
+  <span data-count="2">l</span>et rec calc_max_dd peak max_dd = function
+    | <span data-count="1">[</span>] -&gt; max_dd
+    | <span data-count="4">p</span> :: rest -&gt;
         let new_peak = max peak p in
-        <span data-count="202">l</span>et drawdown = (peak -. p) /. peak in
+        <span data-count="4">l</span>et drawdown = (peak -. p) /. peak in
         let new_max_dd = max max_dd drawdown in
-        <span data-count="202">c</span>alc_max_dd new_peak new_max_dd rest
+        <span data-count="4">c</span>alc_max_dd new_peak new_max_dd rest
   in
   match prices with
   | <span data-count="1">[</span>] -&gt; 0.0
-  | <span data-count="3">p</span> :: rest -&gt; calc_max_dd p 0.0 rest
+  | <span data-count="1">p</span> :: rest -&gt; calc_max_dd p 0.0 rest
 
 (*Sharpe ratio: (avg return - risk free rate) / volatility
   Using 0% risk-free rate for simplicity*)
 let sharpe_ratio returns volatility =
-  <span data-count="4">l</span>et avg_return =
+  <span data-count="2">l</span>et avg_return =
     match returns with
     | <span data-count="0">[</span>] -&gt; 0.0
-    | <span data-count="4">_</span> -&gt; av<span data-count="4">g</span> returns *. 252.0
+    | <span data-count="2">_</span> -&gt; av<span data-count="2">g</span> returns *. 252.0
   in
-  if volatility &gt; 0.0 then <span data-count="3">a</span>vg_return /. volatility else <span data-count="1">0</span>.0
+  if volatility &gt; 0.0 then <span data-count="1">a</span>vg_return /. volatility else <span data-count="1">0</span>.0
 </code></pre>
       </div>
     </div>
