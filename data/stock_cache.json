@@ -1,13 +1,13 @@
 {
   "AAPL": {
     "symbol": "AAPL",
-    "avg_price": 244.4105000000001,
-    "cumulative_return": 0.37182436966733773,
-    "volatility": 0.22869462884917652,
+    "avg_price": 245.88170000000008,
+    "cumulative_return": 0.3356490293110011,
+    "volatility": 0.230558125989208,
     "max_drawdown": 0.056063432835820944,
-    "sharpe": 3.637623667705897,
-    "cum_log_return": 0.3161415106631105,
-    "last_updated": "2025-12-03"
+    "sharpe": 3.314109881855809,
+    "cum_log_return": 0.2894173379905529,
+    "last_updated": "2025-12-05"
   },
   "COST": {
     "symbol": "COST",
@@ -101,12 +101,22 @@
   },
   "BAC": {
     "symbol": "BAC",
-    "avg_price": 50.25639999999999,
-    "cumulative_return": 0.13001912045889097,
-    "volatility": 0.2045154936667212,
+    "avg_price": 50.40669999999998,
+    "cumulative_return": 0.1766239409081033,
+    "volatility": 0.20311872879461274,
     "max_drawdown": 0.07285861713106297,
-    "sharpe": 1.6245082141205804,
-    "cum_log_return": 0.12223455334117646,
+    "sharpe": 2.1414673355437794,
+    "cum_log_return": 0.16264927077487065,
+    "last_updated": "2025-12-05"
+  },
+  "KO": {
+    "symbol": "KO",
+    "avg_price": 68.9825,
+    "cumulative_return": 0.017273643299265912,
+    "volatility": 0.15891480551427473,
+    "max_drawdown": 0.07180212014134273,
+    "sharpe": 0.3534446948932493,
+    "cum_log_return": 0.017126149997972996,
     "last_updated": "2025-12-03"
   },
   "PEP": {
@@ -117,16 +127,6 @@
     "max_drawdown": 0.08753943217665611,
     "sharpe": 1.1207413227687382,
     "cum_log_return": 0.09183731267918009,
-    "last_updated": "2025-12-03"
-  },
-  "KO": {
-    "symbol": "KO",
-    "avg_price": 68.9825,
-    "cumulative_return": 0.017273643299265912,
-    "volatility": 0.15891480551427473,
-    "max_drawdown": 0.07180212014134273,
-    "sharpe": 0.3534446948932493,
-    "cum_log_return": 0.017126149997972996,
     "last_updated": "2025-12-03"
   },
   "MA": {
@@ -161,13 +161,13 @@
   },
   "MSFT": {
     "symbol": "MSFT",
-    "avg_price": 510.6739000000001,
-    "cumulative_return": -0.0258836626774283,
-    "volatility": 0.18010124597490756,
+    "avg_price": 510.1712000000001,
+    "cumulative_return": -0.0490091372967842,
+    "volatility": 0.18445197956650183,
     "max_drawdown": 0.12904237460106635,
-    "sharpe": -0.28058984768115325,
-    "cum_log_return": -0.026224539636014507,
-    "last_updated": "2025-12-03"
+    "sharpe": -0.6010591443021058,
+    "cum_log_return": -0.05025082457626439,
+    "last_updated": "2025-12-05"
   },
   "V": {
     "symbol": "V",

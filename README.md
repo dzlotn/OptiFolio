@@ -33,6 +33,12 @@ See [INSTALL.md](INSTALL.md) for detailed installation instructions.
 ### 1. Refresh Stock Cache (Recommended)
 
 ```bash
+# 1. Set API key
+export ALPHAVANTAGE_API_KEY=your_key_here
+
+# 2. Build project
+dune build
+
 # Refresh all default stocks (20 stocks, ~5 minutes)
 dune exec -- FinalProject-refresh
 
