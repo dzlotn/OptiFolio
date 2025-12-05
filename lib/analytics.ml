@@ -41,7 +41,6 @@ exception Empty_series
 exception Length_mismatch of string
 
 (*Computes the avg stock price*)
-
 let avg xs =
   match xs with
   | [] -> raise Empty_series
@@ -51,7 +50,6 @@ let avg xs =
       sum /. count
 
 (*Computes the sum of squares of a list of stock vals*)
-
 let sum_of_squares lst =
   match lst with
   | [] -> raise Empty_series
@@ -73,7 +71,6 @@ let variance lst =
       sos /. n
 
 (*Computes the standard deviation of a list of stock vals*)
-
 let standard_deviation lst =
   let v = variance lst in
   sqrt v

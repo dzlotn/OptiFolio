@@ -31,10 +31,8 @@ let test_api_and_analyze_stock _ =
              assert_failure
                (Printf.sprintf "API endpoint failed for %s: %s" test_symbol err)
          | Ok prices ->
-             (* Verify we got valid price data *)
              assert_bool "Should have at least 30 price points"
                (List.length prices >= 30);
-             (* Verify prices are positive *)
              assert_bool "All prices should be positive"
                (List.for_all (fun p -> p > 0.0) prices));
          (* Test analyze_stock with same symbol *)
@@ -216,16 +214,13 @@ let test_refresh_stock_cache_default_symbols _ =
       skip_if true
         "ALPHAVANTAGE_API_KEY not set - skipping default symbols test"
   | Some _ ->
-      (* This test would take too long (20 stocks * 15s = 5 minutes)
-         So we just verify the function can be called *)
       Lwt_main.run
         (try
-           (* We'll interrupt this, but test that it starts correctly *)
            let* () = Lwt_unix.sleep 0.1 in
            Lwt.return_unit
          with _ -> Lwt.return_unit)
 
-(* Test error handling for invalid symbols - only test refresh_single_stock to save API calls *)
+(* Test error handling for invalid symbols *)
 let test_error_handling_invalid_symbols _ =
   match Sys.getenv_opt "ALPHAVANTAGE_API_KEY" with
   | None | Some "" ->
@@ -250,11 +245,8 @@ let test_refresh_stock_cache_mixed_symbols _ =
         "ALPHAVANTAGE_API_KEY not set - skipping mixed symbols test"
   | Some _ ->
       Lwt_main.run
-        (* Reduced to just 1 valid symbol to save API calls - invalid handling tested elsewhere *)
         (let test_symbols = [ "GOOGL" ] in
-         (* Should handle gracefully *)
          let* () = refresh_stock_cache ~symbols:(Some test_symbols) () in
-         (* Verify valid symbol is in cache *)
          let cache = load_cache () in
          let googl_in_cache = get_stock_from_cache cache "GOOGL" <> None in
          assert_bool
@@ -262,7 +254,6 @@ let test_refresh_stock_cache_mixed_symbols _ =
            googl_in_cache;
          Lwt.return_unit)
 
-(* Test symbol case handling - use cached data if available to avoid API call *)
 let test_symbol_case_handling _ =
   match Sys.getenv_opt "ALPHAVANTAGE_API_KEY" with
   | None | Some "" ->
@@ -272,21 +263,17 @@ let test_symbol_case_handling _ =
       Lwt_main.run
         (* Use a symbol that might already be in cache from previous tests *)
         (let lowercase_symbol = "msft" in
-         (* Check cache first - if already there, just verify case handling *)
          let cache = load_cache () in
          let cached_stock = get_stock_from_cache cache "MSFT" in
          match cached_stock with
          | Some stock ->
-             (* Already in cache - just verify it's uppercase *)
              assert_equal ~printer:(fun x -> x) "MSFT" stock.symbol
                ~msg:"Cached symbol should be uppercase";
              Lwt.return_unit
          | None ->
-             (* Not in cache - need to fetch (1 API call) *)
              let* result = refresh_single_stock lowercase_symbol in
              match result with
              | Some (summary, _) ->
-                 (* Verify symbol was uppercased in cache *)
                  let cache_after = load_cache () in
                  let stock_opt = get_stock_from_cache cache_after "MSFT" in
                  (match stock_opt with
@@ -297,7 +284,6 @@ let test_symbol_case_handling _ =
                  | None ->
                      assert_failure "MSFT should be in cache after refresh")
              | None ->
-                 (* If it failed, that's okay - might be rate limited *)
                  Lwt.return_unit)
 
 let suite =

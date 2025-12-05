@@ -33,8 +33,6 @@ let test_calculate_stock_score_perfect_match _ =
   in
   let stock = make_stock ~symbol:"TEST" ~summary ~cum_log_return:0.18 ~last_updated:"2024-01-01" in
   let score = calculate_stock_score profile stock in
-  (* Perfect volatility match (1.0), good sharpe (1.0), good drawdown (0.5), good return (0.7) *)
-  (* Expected: 0.3*1.0 + 0.3*1.0 + 0.2*0.5 + 0.2*0.7 = 0.3 + 0.3 + 0.1 + 0.14 = 0.84 *)
   assert_bool "Perfect match should have high score" (score > 0.8)
 
 (* Test calculate_stock_score with poor match *)
@@ -49,7 +47,6 @@ let test_calculate_stock_score_poor_match _ =
   in
   let stock = make_stock ~symbol:"TEST" ~summary ~cum_log_return:(-0.11) ~last_updated:"2024-01-01" in
   let score = calculate_stock_score profile stock in
-  (* Poor volatility (0.0), poor sharpe (0.0), poor drawdown (0.0), negative return (0.0) *)
   assert_bool "Poor match should have low score" (score < 0.3)
 
 (* Test calculate_stock_score with volatility mismatch *)
@@ -95,9 +92,7 @@ let test_calculate_stock_score_high_drawdown _ =
   in
   let stock = make_stock ~symbol:"TEST" ~summary ~cum_log_return:0.18 ~last_updated:"2024-01-01" in
   let score = calculate_stock_score profile stock in
-  (* Drawdown exceeds tolerance, so drawdown score should be 0 *)
-  (* Score: volatility=1.0, sharpe=1.0, drawdown=0.0, return=0.7 *)
-  (* Total: 0.3*1.0 + 0.3*1.0 + 0.2*0.0 + 0.2*0.7 = 0.74 *)
+
   assert_bool "High drawdown should reduce score" (score <= 0.75)
 
 (* Test calculate_stock_score with negative returns *)
@@ -112,9 +107,7 @@ let test_calculate_stock_score_negative_returns _ =
   in
   let stock = make_stock ~symbol:"TEST" ~summary ~cum_log_return:(-0.35) ~last_updated:"2024-01-01" in
   let score = calculate_stock_score profile stock in
-  (* Negative return: max(0, min(1, -0.3 + 0.5)) = max(0, 0.2) = 0.2 *)
-  (* Score: volatility=1.0, sharpe=1.0, drawdown=0.5, return=0.2 *)
-  (* Total: 0.3*1.0 + 0.3*1.0 + 0.2*0.5 + 0.2*0.2 = 0.74 *)
+
   assert_bool "Negative returns should reduce score" (score <= 0.75)
 
 (* Test generate_reason with all positive attributes *)
@@ -170,7 +163,6 @@ let test_check_stock_against_profile_high_volatility _ =
     make_profile ~risk_score:0.2 ~target_volatility:0.15 ~min_sharpe:1.0
       ~max_drawdown_tolerance:0.20 ~portfolio_size:5
   in
-  (* Volatility 0.30 > 0.15 * 1.5 = 0.225, so should fail *)
   let summary =
     make_summary ~avg_price:100.0 ~cumulative_return:0.20 ~volatility:0.30
       ~max_drawdown:0.10 ~sharpe:1.5
@@ -343,7 +335,6 @@ let test_get_recommendations_empty_cache _ =
   assert_bool "Should return empty list when cache is empty"
     (recommendations = []);
   
-  (* Restore original cache *)
   Stock_cache.save_cache original_cache
 
 (* Test get_recommendations excludes specified symbols - covers filtering logic *)
@@ -376,7 +367,6 @@ let test_get_recommendations_excludes_symbols _ =
     test_stocks;
   Stock_cache.save_cache cache;
   
-  (* Test exclusion - should not include EXCLUDE1 or EXCLUDE2 *)
   let recommendations = get_recommendations profile [ "EXCLUDE1"; "EXCLUDE2" ] in
   let rec check_excluded = function
     | [] -> false
@@ -406,7 +396,6 @@ let test_get_recommendations_sorted _ =
       ~max_drawdown_tolerance:0.20 ~portfolio_size:5
   in
   let recommendations = get_recommendations profile [] in
-  (* Verify scores are in descending order *)
   let rec check_sorted = function
     | [] | [ _ ] -> true
     | r1 :: r2 :: rest -> r1.score >= r2.score && check_sorted (r2 :: rest)
@@ -425,7 +414,6 @@ let test_calculate_stock_score_low_volatility _ =
       ~max_drawdown:0.10 ~sharpe:2.0
   in
   let stock = make_stock ~symbol:"TEST" ~summary ~cum_log_return:0.18 ~last_updated:"2024-01-01" in
-  (* Should calculate score correctly with low volatility *)
   let score = calculate_stock_score profile stock in
   assert_bool "Should handle low volatility" (score >= 0.0 && score <= 1.0)
 

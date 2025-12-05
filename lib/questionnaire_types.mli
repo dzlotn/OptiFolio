@@ -1,5 +1,3 @@
-(** Questionnaire types and parsing functions for user input *)
-
 (** Investment goal options *)
 type investment_goal =
   | Growth        (** Capital appreciation focus *)
@@ -47,37 +45,37 @@ type questionnaire_responses = {
 (** [parse_goal input] parses investment goal from user input.
     Accepts "1", "growth" for Growth; "2", "income" for Income;
     "3", "balanced" for Balanced; "4", "preservation" for Preservation.
-    Returns [None] for invalid input. *)
+    Returns: [None] for invalid input. *)
 val parse_goal : string -> investment_goal option
 
 (** [parse_experience input] parses investment experience from user input.
     Accepts "1", "beginner" for Beginner; "2", "intermediate" for Intermediate;
     "3", "experienced" for Experienced.
-    Returns [None] for invalid input. *)
+    Returns: [None] for invalid input. *)
 val parse_experience : string -> investment_experience option
 
 (** [parse_risk input] parses risk tolerance from user input.
     Accepts "1", "conservative" for Conservative; "2", "moderate" for Moderate;
     "3", "aggressive" for Aggressive.
-    Returns [None] for invalid input. *)
+    Returns: [None] for invalid input. *)
 val parse_risk : string -> risk_tolerance option
 
 (** [parse_horizon input] parses time horizon from user input.
     Accepts "1", "short-term", "short" for Short_term;
     "2", "medium-term", "medium" for Medium_term;
     "3", "long-term", "long" for Long_term.
-    Returns [None] for invalid input. *)
+    Returns: [None] for invalid input. *)
 val parse_horizon : string -> time_horizon option
 
 (** [parse_portfolio_size input] parses portfolio size from user input.
     Accepts "1", "small" for Small; "2", "medium" for Medium;
     "3", "large" for Large.
-    Returns [None] for invalid input. *)
+    Returns: [None] for invalid input. *)
 val parse_portfolio_size : string -> portfolio_size option
 
 (** [parse_yes_no input] parses yes/no responses from user input.
     Accepts "yes", "y", "true", "1" for true;
     "no", "n", "false", "2" for false.
-    Returns [None] for invalid input. *)
+    Returns: [None] for invalid input. *)
 val parse_yes_no : string -> bool option
 

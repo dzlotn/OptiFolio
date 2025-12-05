@@ -1,5 +1,5 @@
 open OUnit2
-open Analytics (* replace with your module name *)
+open Analytics 
 
 (* Helper floats equality *)
 let eps = 1e-6
@@ -11,7 +11,6 @@ let test_avg _ =
 
 let test_sum_of_squares _ =
   assert_raises Empty_series (fun () -> sum_of_squares []);
-  (* mean is 2; sos = (1-2)^2 + (2-2)^2 + (3-2)^2 = 2 *)
   assert_bool "sos" (float_eq (sum_of_squares [ 1.; 2.; 3. ]) 2.)
 
 let test_variance _ =
@@ -26,7 +25,6 @@ let test_simple_return_ratio _ =
   assert_raises Empty_series (fun () -> simple_return_ratio []);
   assert_raises Empty_series (fun () -> simple_return_ratio [ 5.0 ]);
 
-  (* from 100 -> 110 -> 121: returns = 0.10, 0.10 *)
   let r = simple_return_ratio [ 100.; 110.; 121. ] in
   assert_equal 2 (List.length r);
   assert_bool "r1" (float_eq (List.nth r 0) 0.10);
@@ -36,13 +34,11 @@ let test_log_return_ratio _ =
   assert_raises Empty_series (fun () -> log_return_ratio []);
   assert_raises Empty_series (fun () -> log_return_ratio [ 5.0 ]);
 
-  (* log(110/100) = log(1.1) *)
   let r = log_return_ratio [ 100.; 110.; 121. ] in
   assert_equal 2 (List.length r);
   assert_bool "log r1" (float_eq (List.nth r 0) (log 1.1));
   assert_bool "log r2" (float_eq (List.nth r 1) (log 1.1));
 
-  (* property: sum(log returns) = log(final/initial) *)
   let s = cumulative_log_return r in
   assert_bool "log property" (float_eq s (log (121. /. 100.)))
 
@@ -51,7 +47,6 @@ let test_cumulative_return _ =
   assert_bool "cum return" (float_eq (cumulative_return [ 100.; 120. ]) 0.20)
 
 let test_annualized_volatility _ =
-  (* volatility = stddev * sqrt(252) *)
   let sd = standard_deviation [ 1.; 2.; 3. ] in
   assert_bool "ann vol"
     (float_eq (annualized_volatility [ 1.; 2.; 3. ]) (sd *. sqrt 252.))
@@ -63,7 +58,6 @@ let test_cumulative_log_return _ =
 
 let test_max_drawdown _ =
   assert_bool "empty" (float_eq (max_drawdown []) 0.0);
-  (* Example: peak at 100, trough at 70: drawdown = 30% *)
   assert_bool "mdd" (float_eq (max_drawdown [ 100.; 90.; 80.; 70.; 85. ]) 0.30)
 
 let test_sharpe_ratio _ =
@@ -72,10 +66,8 @@ let test_sharpe_ratio _ =
   let expected = avg returns *. 252.0 /. vol in
   assert_bool "sharpe" (float_eq (sharpe_ratio returns vol) expected);
 
-  (* Zero volatility => sharpe = 0 *)
   assert_bool "zero vol" (float_eq (sharpe_ratio [ 1.0 ] 0.0) 0.0);
   
-  (* Empty returns => avg_return = 0.0, so sharpe = 0 *)
   assert_bool "empty returns" (float_eq (sharpe_ratio [] 0.1) 0.0);
   assert_bool "empty returns with zero vol" (float_eq (sharpe_ratio [] 0.0) 0.0)
 

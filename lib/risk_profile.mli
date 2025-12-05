@@ -14,14 +14,10 @@ type risk_profile = {
 (** [calculate_risk_profile responses] converts questionnaire responses into a
     numeric risk profile. Calculates risk score based on risk tolerance, investment
     goal, experience, time horizon, and willingness to accept losses. Derives
-    target volatility, minimum Sharpe ratio, and drawdown tolerance from the risk score.
-    @param responses The user's questionnaire responses
-    @return A risk profile with numeric values for portfolio optimization *)
+    target volatility, minimum Sharpe ratio, and drawdown tolerance from the risk score. *)
 val calculate_risk_profile : questionnaire_responses -> risk_profile
 
 (** [risk_profile_to_string profile] converts a risk profile to a formatted string
-    for display purposes.
-    @param profile The risk profile to convert
-    @return A formatted string representation of the risk profile *)
+    for display purposes. *)
 val risk_profile_to_string : risk_profile -> string
 
