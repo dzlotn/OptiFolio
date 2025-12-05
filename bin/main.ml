@@ -126,7 +126,8 @@ let rec ask_willing_to_lose name =
     let* () =
       Lwt_io.printf
         "Error: Empty input. Please enter 'yes' or 'no' (you can also use 'y', \
-         'n', 'true', 'false', '1', or '2').\n%!"
+         'n', 'true', 'false', '1', or '2').\n\
+         %!"
     in
     ask_willing_to_lose name
   else
@@ -138,7 +139,8 @@ let rec ask_willing_to_lose name =
             "Error: Invalid input '%s'. Please enter one of the following:\n\
             \  For 'yes': yes, y, true, or 1\n\
             \  For 'no': no, n, false, or 2\n\
-             %!" trimmed_input
+             %!"
+            trimmed_input
         in
         ask_willing_to_lose name
 
@@ -152,7 +154,9 @@ let rec ask_list_investments name =
        %!"
       name
   in
-  let* input = prompt_input "Enter your investments (or press Enter to skip): " in
+  let* input =
+    prompt_input "Enter your investments (or press Enter to skip): "
+  in
   let investments =
     input |> String.split_on_char ',' |> List.map String.trim
     |> List.filter (fun s -> s <> "")
@@ -256,7 +260,7 @@ let validate_stocks (stocks : string list) : string list Lwt.t =
   let cache = Stock_cache.load_cache () in
   let rec validate_loop invalid = function
     | [] -> Lwt.return invalid
-    | symbol :: rest ->
+    | symbol :: rest -> (
         let symbol_upper = String.uppercase_ascii symbol in
         match Stock_cache.get_stock_from_cache cache symbol_upper with
         | Some _ -> validate_loop invalid rest
@@ -265,12 +269,13 @@ let validate_stocks (stocks : string list) : string list Lwt.t =
             let* result = refresh_single_stock symbol_upper in
             match result with
             | Some _ -> validate_loop invalid rest
-            | None -> validate_loop (symbol_upper :: invalid) rest)
+            | None -> validate_loop (symbol_upper :: invalid) rest))
   in
   validate_loop [] stocks
 
 (* Validate and allow correction or skipping of stocks *)
-let rec validate_and_correct_stocks name (stocks : string list) : string list Lwt.t =
+let rec validate_and_correct_stocks name (stocks : string list) :
+    string list Lwt.t =
   if stocks = [] then Lwt.return []
   else
     let* invalid = validate_stocks stocks in
@@ -281,21 +286,26 @@ let rec validate_and_correct_stocks name (stocks : string list) : string list Lw
           "\nThe following stock symbols are invalid or could not be found:\n%!"
       in
       let* () =
-        Lwt_list.iter_s
-          (fun sym -> Lwt_io.printf "  - %s\n%!" sym)
-          invalid
+        Lwt_list.iter_s (fun sym -> Lwt_io.printf "  - %s\n%!" sym) invalid
       in
       let* () =
         Lwt_io.printf
-          "\nOptions:\n\
+          "\n\
+           Options:\n\
           \  1. Enter corrected ticker symbols (comma separated)\n\
           \  2. Press Enter to skip and continue without these stocks\n\
            %!"
       in
-      let* input = prompt_input "Enter your choice (or press Enter to skip): " in
+      let* input =
+        prompt_input "Enter your choice (or press Enter to skip): "
+      in
       if String.trim input = "" then
         (* Skip invalid stocks, return only valid ones *)
-        let valid = List.filter (fun s -> not (List.mem (String.uppercase_ascii s) invalid)) stocks in
+        let valid =
+          List.filter
+            (fun s -> not (List.mem (String.uppercase_ascii s) invalid))
+            stocks
+        in
         Lwt.return valid
       else
         let corrected =
@@ -463,7 +473,8 @@ let () =
                    (fun _ -> Lwt.return_unit)
                in
                let* () = print_summary responses in
-               (* Validate and correct stocks if needed (for GUI, we'll prompt in CLI) *)
+               (* Validate and correct stocks if needed (for GUI, we'll prompt
+                  in CLI) *)
                let current_stocks =
                  match responses.current_investments with
                  | Some lst -> lst
